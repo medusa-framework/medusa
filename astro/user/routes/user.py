@@ -1,0 +1,39 @@
+from flask import Blueprint
+from astro.user.controllers.user import UserController
+
+user1 = Blueprint("user", __name__)
+
+
+@user1.route("/user/create")
+def create():
+    return UserController().create()
+
+
+@user1.route("/user/get/all")
+def get_all():
+    return UserController().get_all()
+
+
+@user1.route("/user/get")
+def get():
+    return UserController().get()
+
+
+@user1.route("/user/delete")
+def delete():
+    return UserController().delete()
+
+
+@user1.route("/user/delete/all")
+def delete_all():
+    return UserController().delete_all()
+
+
+@user1.route("/user/update/all")
+def update():
+    return UserController().update_all()
+
+
+@user1.route("/user/update")
+def update_all():
+    return UserController().update()
