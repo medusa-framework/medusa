@@ -9,12 +9,12 @@ def create():
     return UserController().create()
 
 
-@user1.route("/user/get/all")
+@user1.route("/user/get/all", methods=["GET"])
 def get_all():
     return UserController().get_all()
 
 
-@user1.route("/user/get")
+@user1.route("/user/get", methods=["GET"])
 def get():
     return UserController().get()
 
