@@ -29,6 +29,8 @@ def create_app():
     # print(vars(app.extensions['migrate']))
     from astro.user.routes.user import user1
     from astro.movie.routes.movie import movie
+    from astro.comment.routes.comment import comment
     app.register_blueprint(user1)
     app.register_blueprint(movie)
+    app.register_blueprint(comment)
     return app
