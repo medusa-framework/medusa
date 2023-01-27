@@ -24,7 +24,15 @@ class UserController:
         return to_json(User1().delete())
 
     def update_all(self):
-        return to_json(User1().update_all(username="john", password="john2", email="john3"))
+        return to_json(User1().update_all(
+            username="john",
+            password="john2",
+            email="john3"
+        ))
 
     def update(self):
-        return to_json(User1().update(username="paul", password="paul2", email="paul3"))
+        return to_json(User1().update(
+            username="paul",
+            password="paul2",
+            email="paul3"
+        ))

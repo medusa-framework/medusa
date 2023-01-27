@@ -24,8 +24,11 @@ def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///astro"
     db.init_app(app)
-    migrate.init_app(app)
+    migrate.init_app(app, db)
+    # app.extensions['migrate'] = db
+    # print(vars(app.extensions['migrate']))
     from astro.user.routes.user import user1
-    print(type(user1))
+    from astro.movie.routes.movie import movie
     app.register_blueprint(user1)
+    app.register_blueprint(movie)
     return app
