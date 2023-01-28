@@ -25,12 +25,10 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///astro"
     db.init_app(app)
     migrate.init_app(app, db)
-    # app.extensions['migrate'] = db
-    # print(vars(app.extensions['migrate']))
     from astro.user.routes.user import user1
     from astro.movie.routes.movie import movie
     from astro.comment.routes.comment import comment
-    app.register_blueprint(user1)
-    app.register_blueprint(movie)
-    app.register_blueprint(comment)
+    app.register_blueprint(user1, url_prefix="/api/user")
+    app.register_blueprint(movie, url_prefix="/api/movie")
+    app.register_blueprint(comment, url_prefix="/api/comment")
     return app
