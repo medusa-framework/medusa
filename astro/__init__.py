@@ -3,6 +3,7 @@ import json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from astro.config.models.config import Config
 
 
 db = SQLAlchemy()
@@ -22,7 +23,7 @@ def to_json(obj):
 
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///astro"
+    app.config.from_object(Config)
     db.init_app(app)
     migrate.init_app(app, db)
     from astro.user.routes.user import user1
@@ -31,4 +32,5 @@ def create_app():
     app.register_blueprint(user1, url_prefix="/api/user")
     app.register_blueprint(movie, url_prefix="/api/movie")
     app.register_blueprint(comment, url_prefix="/api/comment")
+    print(Config().APP_NAME)
     return app
