@@ -9,6 +9,7 @@ class Base():
     uuid = db.Column(db.String())
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
+    deleted = db.Column(db.Boolean, default=False)
 
     def __repr__(self) -> str:
         return str(self.__dict__)
@@ -26,11 +27,12 @@ class Base():
             f"ASTRO: {self.__class__.__name__} record # {record.id} added succesfully.\n \n")
         return record
 
-    def get_all(self, attr=None):
+    def get_all(self, attr=None, soft=False):
+        records = self.query.all()
         if attr:
-            records = self.query.order_by(attr).all()
+            records = self.query.order_by(attr).filter_by(deleted=soft).all()
         else:
-            records = self.query.all()
+            records = self.query.filter_by(deleted=soft).all()
         if not records == []:
             print(
                 f"ASTRO: {self.__class__.__name__} records found: \n {records}.\n \n")
@@ -46,7 +48,7 @@ class Base():
         elif id:
             id = self.validate_int()
             if id:
-                return self.query.filter_by(id=id).first()
+                return self.query.filter_by(id=id).filter_by(deleted=False).first()
             else:
                 print(
                     f"ASTRO: {self.__class__.__name__} record invalid.\n \n")
@@ -95,7 +97,7 @@ class Base():
         for arg in kwargs:
             setattr(self, arg, kwargs.get(arg))
 
-    def delete(self, id=None):
+    def delete(self, id=None, soft=True):
         if self.id:
             id = self.id
         else:
@@ -103,7 +105,10 @@ class Base():
         record = self.query.filter_by(id=id).first()
         if not record == None:
             record.updated_at = datetime.now()
-            db.session.delete(record)
+            if soft == True:
+                record.deleted = True
+            else:
+                db.session.delete(record)
             db.session.commit()
             print(
                 f"ASTRO: {self.__class__.__name__} record # {record.id} deleted succesfully.\n \n")
