@@ -13,12 +13,12 @@ class Base():
     def __repr__(self) -> str:
         return str(self.__dict__)
 
-    def create(self, json=None):
+    def create(self, json=None, **kwargs):
         if not json:
             json = request.json
         self.uuid = str(uuid4())
         self.created_at = datetime.now()
-        self.bind_attributes()
+        self.bind_attributes(json, kwargs)
         db.session.add(self)
         db.session.commit()
         record = self.query.order_by(self.__class__.created_at.desc()).first()
@@ -56,7 +56,7 @@ class Base():
                 f"ASTRO: {self.__class__.__name__} record not found.\n \n")
             return None
 
-    def update(self, json=None, id=None):
+    def update(self, json=None, id=None, **kwargs):
         if not json:
             json = request.json
         if self.id:
@@ -66,7 +66,7 @@ class Base():
         record = self.query.filter_by(id=id).first()
         if not record == None:
             record.updated_at = datetime.now()
-            record.bind_attributes()
+            record.bind_attributes(json, kwargs)
             db.session.commit()
             print(
                 f"ASTRO: {self.__class__.__name__} record # {record.id} updated succesfully.\n \n")
@@ -76,21 +76,24 @@ class Base():
                 f"ASTRO: {self.__class__.__name__} record id {request.args.get('id')} not found.\n \n")
             return None
 
-    def update_all(self, json=None):
+    def update_all(self, json=None, **kwargs):
         if not json:
             json = request.json
         records = self.get_all()
         if records == []:
             return None
         for record in records:
-            record.update()
+            record.update(kwargs)
         return self.get_all(attr="updated_at")
 
-    def bind_attributes(self, json=None):
+    def bind_attributes(self, json=None, kwargs=None):
         self.updated_at = datetime.now()
-        if request.data and request.json:
-            for arg in request.json:
-                setattr(self, arg, request.json.get(arg))
+        for arg in request.json:
+            setattr(self, arg, request.json.get(arg))
+        for arg in json:
+            setattr(self, arg, json.get(arg))
+        for arg in kwargs:
+            setattr(self, arg, kwargs.get(arg))
 
     def delete(self, id=None):
         if self.id:
