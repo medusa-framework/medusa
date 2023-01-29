@@ -2,7 +2,7 @@ from astro import db
 from flask import request
 
 
-class User1(db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(128))
     password = db.Column(db.String())
