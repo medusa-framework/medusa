@@ -2,13 +2,33 @@ from flask import Blueprint
 from astro import to_json
 from astro.user.models.user import User
 from astro.base.controllers.base import BaseController
-
+from astro.user.controllers.user import UserController
 user = Blueprint("user", __name__)
 
 
 @user.route("/create", methods=["POST"])
 def create():
     return to_json(BaseController(User()).create())
+
+
+@user.route("/register", methods=["POST"])
+def register():
+    return to_json(UserController().register())
+
+
+@user.route("/login", methods=["POST"])
+def login():
+    return to_json(UserController().login())
+
+
+@user.route("/logout", methods=["POST"])
+def logout():
+    return to_json(UserController().logout())
+
+
+@user.route("/current", methods=["GET"])
+def current():
+    return to_json(UserController().current())
 
 
 @user.route("/get/all", methods=["GET"])
