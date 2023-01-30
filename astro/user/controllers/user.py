@@ -14,3 +14,6 @@ class UserController:
 
     def register(self):
         return User().register()
+
+    def comments(self):
+        return User()._comments()

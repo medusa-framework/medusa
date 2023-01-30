@@ -45,14 +45,12 @@ class Base():
     def get(self, id=None):
         if self.id:
             return self
-        elif id:
-            id = self.validate_int()
-            if id:
-                return self.query.filter_by(id=id).filter_by(deleted=False).first()
-            else:
-                print(
-                    f"ASTRO: {self.__class__.__name__} record invalid.\n \n")
-                return None
+        if request.args and request.args.get("id"):
+            id = self.validate_int(request.args.get("id"))
+        if id:
+            id = self.validate_int(id)
+        if id:
+            return self.query.filter_by(id=id).filter_by(deleted=False).first()
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not found.\n \n")
@@ -105,6 +103,7 @@ class Base():
         record = self.query.filter_by(id=id).first()
         if not record == None:
             record.updated_at = datetime.now()
+            temp_record = record
             if soft == True:
                 record.deleted = True
             else:
@@ -112,7 +111,7 @@ class Base():
             db.session.commit()
             print(
                 f"ASTRO: {self.__class__.__name__} record # {record.id} deleted succesfully.\n \n")
-            return self.query.order_by(self.__class__.updated_at.desc()).first()
+            return temp_record
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record id {request.args.get('id')} not found.\n \n")

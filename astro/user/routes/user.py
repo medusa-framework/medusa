@@ -41,6 +41,11 @@ def get():
     return to_json(BaseController(User()).get())
 
 
+@user.route("/comments", methods=["GET"])
+def comments():
+    return to_json(UserController().comments())
+
+
 @user.route("/delete/all", methods=["DELETE"])
 def delete_all():
     return to_json(BaseController(User()).delete_all())
