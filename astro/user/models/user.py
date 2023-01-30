@@ -8,6 +8,7 @@ class User(db.Model, Base, UserMixin):
     username = db.Column(db.String(128))
     password = db.Column(db.String())
     email = db.Column(db.String(120))
+    comments = db.relationship("Comment", backref="user", lazy=True)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -58,3 +59,8 @@ class User(db.Model, Base, UserMixin):
             return temp_user
         else:
             return None
+
+    def _comments(self):
+        user = self.get(request.args.get("id"))
+        print(user)
+        return user.comments
