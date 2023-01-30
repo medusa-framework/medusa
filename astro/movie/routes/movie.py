@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask_login import login_required
 from astro import to_json
 from astro.movie.models.movie import Movie
 from astro.base.controllers.base import BaseController
@@ -7,6 +8,7 @@ movie = Blueprint("movie", __name__)
 
 
 @movie.route("/create", methods=["POST"])
+@login_required
 def create():
     return to_json(BaseController(Movie()).create())
 
@@ -22,20 +24,24 @@ def get():
 
 
 @movie.route("/delete/all", methods=["DELETE"])
+@login_required
 def delete_all():
     return to_json(BaseController(Movie()).delete_all())
 
 
 @movie.route("/delete", methods=["DELETE"])
+@login_required
 def delete():
     return to_json(BaseController(Movie()).delete())
 
 
 @movie.route("/update/all", methods=["PATCH"])
+@login_required
 def update():
     return to_json(BaseController(Movie()).update_all())
 
 
 @movie.route("/update", methods=["PATCH"])
+@login_required
 def update_all():
     return to_json(BaseController(Movie()).update())

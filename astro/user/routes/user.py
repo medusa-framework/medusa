@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask_login import login_required
 from astro import to_json
 from astro.user.models.user import User
 from astro.base.controllers.base import BaseController
@@ -47,20 +48,24 @@ def comments():
 
 
 @user.route("/delete/all", methods=["DELETE"])
+@login_required
 def delete_all():
     return to_json(BaseController(User()).delete_all())
 
 
 @user.route("/delete", methods=["DELETE"])
+@login_required
 def delete():
     return to_json(BaseController(User()).delete())
 
 
 @user.route("/update/all", methods=["PATCH"])
+@login_required
 def update():
     return to_json(BaseController(User()).update_all())
 
 
 @user.route("/update", methods=["PATCH"])
+@login_required
 def update_all():
     return to_json(BaseController(User()).update())
