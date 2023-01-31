@@ -59,8 +59,3 @@ class User(db.Model, Base, UserMixin):
             return temp_user
         else:
             return None
-
-    def _comments(self):
-        user = self.get(request.args.get("id"))
-        print(user)
-        return user.comments
