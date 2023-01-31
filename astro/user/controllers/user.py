@@ -1,4 +1,5 @@
 from astro.user.models.user import User
+from flask import request
 
 
 class UserController:
@@ -16,4 +17,5 @@ class UserController:
         return User().register()
 
     def comments(self):
-        return User()._comments()
+        user = User().get()
+        return user.comments
