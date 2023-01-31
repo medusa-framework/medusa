@@ -35,3 +35,12 @@ class MovieController:
             duration=260,
             director="tarantino"
         )
+
+    def select(self):
+        return Movie().select()
+
+    def search(self):
+        return Movie().search()
+
+    def tmdb_import(self):
+        return Movie().tmdb_import()
