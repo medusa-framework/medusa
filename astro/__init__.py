@@ -6,12 +6,13 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from astro.config.models.config import Config
 from flask_bcrypt import Bcrypt
-
+import tmdbsimple
 
 db = SQLAlchemy()
 migrate = Migrate(db)
 login_manager = LoginManager()
 bcrypt = Bcrypt()
+tmdb = tmdbsimple
 
 
 def serialize(obj):
@@ -32,6 +33,7 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    tmdb.API_KEY = app.config.get("TMDB_API_KEY")
     from astro.user.routes.user import user
     from astro.movie.routes.movie import movie
     from astro.comment.routes.comment import comment

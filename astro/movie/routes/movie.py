@@ -3,6 +3,7 @@ from flask_login import login_required
 from astro import to_json
 from astro.movie.models.movie import Movie
 from astro.base.controllers.base import BaseController
+from astro.movie.controllers.movie import MovieController
 
 movie = Blueprint("movie", __name__)
 
@@ -11,6 +12,22 @@ movie = Blueprint("movie", __name__)
 @login_required
 def create():
     return to_json(BaseController(Movie()).create())
+
+
+@movie.route("/search", methods=["POST"])
+def search():
+    return to_json(MovieController().search())
+
+
+@movie.route("/select", methods=["POST"])
+def select():
+    return to_json(MovieController().select())
+
+
+@movie.route("/tmdb/import", methods=["POST"])
+@login_required
+def tmdb_import():
+    return to_json(MovieController().tmdb_import())
 
 
 @movie.route("/get/all", methods=["GET"])

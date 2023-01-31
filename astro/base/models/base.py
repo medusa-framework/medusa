@@ -50,7 +50,7 @@ class Base():
         if id:
             id = self.validate_int(id)
         if id:
-            return self.query.filter_by(id=id).filter_by(deleted=False).first()
+            return self.query.filter_by(id=id, deleted=False).first()
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not found.\n \n")
