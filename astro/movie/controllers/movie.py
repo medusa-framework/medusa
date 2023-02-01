@@ -4,11 +4,7 @@ from astro.movie.models.movie import Movie
 class MovieController:
 
     def create(self):
-        return Movie().create(
-            title="pulp fiction",
-            duration=120,
-            director="footguy32"
-        )
+        return Movie().create()
 
     def get_all(self):
         return Movie().get_all()
@@ -23,18 +19,10 @@ class MovieController:
         return Movie().delete()
 
     def update_all(self):
-        return Movie().update_all(
-            title="kill bill",
-            duration=92,
-            director="qdawg11"
-        )
+        return Movie().update_all()
 
     def update(self):
-        return Movie().update(
-            title="reservoir dogs",
-            duration=260,
-            director="tarantino"
-        )
+        return Movie().update()
 
     def select(self):
         return Movie().select()
