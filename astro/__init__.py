@@ -8,6 +8,7 @@ from astro.config.models.config import Config
 from flask_bcrypt import Bcrypt
 import tmdbsimple
 
+
 db = SQLAlchemy()
 migrate = Migrate(db)
 login_manager = LoginManager()
@@ -37,8 +38,10 @@ def create_app():
     from astro.user.routes.user import user
     from astro.movie.routes.movie import movie
     from astro.comment.routes.comment import comment
+    from astro.genre.routes.genre import genre
     app.register_blueprint(user, url_prefix="/api/user")
     app.register_blueprint(movie, url_prefix="/api/movie")
     app.register_blueprint(comment, url_prefix="/api/comment")
+    app.register_blueprint(genre, url_prefix="/api/genre")
     print(Config().APP_NAME)
     return app

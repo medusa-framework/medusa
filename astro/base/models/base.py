@@ -104,6 +104,8 @@ class Base():
         if not record == None:
             record.updated_at = datetime.now()
             temp_record = record
+            if request.args.get("soft") == "0":
+                soft = False
             if soft == True:
                 record.deleted = True
             else:
@@ -133,3 +135,10 @@ class Base():
             return id
         else:
             return None
+
+    def check_duplicate(self, tmdb_id):
+        record = self.query.filter_by(tmdb_id=tmdb_id, deleted=False).first()
+        if record:
+            return True
+        else:
+            return False
