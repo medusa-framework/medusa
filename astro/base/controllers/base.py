@@ -20,7 +20,7 @@ class BaseController():
         return self.model.delete_all()
 
     def delete(self):
-        return self.model.delete(soft=False)
+        return self.model.delete()
 
     def update_all(self):
         return self.model.update_all()
