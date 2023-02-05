@@ -128,9 +128,16 @@ class Base():
         else:
             return None
 
-    def check_duplicate(self, tmdb_id):
-        record = self.query.filter_by(tmdb_id=tmdb_id, deleted=False).first()
-        if record:
-            return True
+    def check_duplicate(self, **kwargs):
+        if "iso_639_1" in kwargs:
+            record = self.query.filter_by(
+                iso_639_1=kwargs.get("iso_639_1")).first()
+            if record:
+                return True
+        elif "tmdb_id" in kwargs:
+            record = self.query.filter_by(
+                tmdb_id=kwargs.get("tmdb_id")).first()
+            if record:
+                return True
         else:
             return False
