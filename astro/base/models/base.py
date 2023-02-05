@@ -15,8 +15,6 @@ class Base():
         return str(self.__dict__)
 
     def create(self, json=None, **kwargs):
-        if not json:
-            json = request.json
         self.uuid = str(uuid4())
         self.created_at = datetime.now()
         self.bind_attributes(json, kwargs)
@@ -27,12 +25,12 @@ class Base():
             f"ASTRO: {self.__class__.__name__} record # {record.id} added succesfully.\n \n")
         return record
 
-    def get_all(self, attr=None, soft=False):
+    def get_all(self, attr=None):
         records = self.query.all()
         if attr:
-            records = self.query.order_by(attr).filter_by(deleted=soft).all()
+            records = self.query.order_by(attr).filter_by().all()
         else:
-            records = self.query.filter_by(deleted=soft).all()
+            records = self.query.filter_by().all()
         if not records == []:
             print(
                 f"ASTRO: {self.__class__.__name__} records found: \n {records}.\n \n")
@@ -48,21 +46,18 @@ class Base():
         if request.args and request.args.get("id"):
             id = self.validate_int(request.args.get("id"))
         if id:
-            id = self.validate_int(id)
-        if id:
-            return self.query.filter_by(id=id, deleted=False).first()
+            return self.query.filter_by(id=id).first()
+
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not found.\n \n")
             return None
 
     def update(self, json=None, id=None, **kwargs):
-        if not json:
-            json = request.json
         if self.id:
             id = self.id
         else:
-            id = request.args.get('id')
+            id = request.args.get("id")
         record = self.query.filter_by(id=id).first()
         if not record == None:
             record.updated_at = datetime.now()
@@ -77,8 +72,6 @@ class Base():
             return None
 
     def update_all(self, json=None, **kwargs):
-        if not json:
-            json = request.json
         records = self.get_all()
         if records == []:
             return None
@@ -88,14 +81,17 @@ class Base():
 
     def bind_attributes(self, json=None, kwargs=None):
         self.updated_at = datetime.now()
-        for arg in request.json:
-            setattr(self, arg, request.json.get(arg))
-        for arg in json:
-            setattr(self, arg, json.get(arg))
+        if request.json:
+            for arg in request.json:
+                setattr(self, arg, request.json.get(arg))
+        if json:
+            for arg in json:
+                print(arg)
+                setattr(self, arg, json.get(arg))
         for arg in kwargs:
             setattr(self, arg, kwargs.get(arg))
 
-    def delete(self, id=None, soft=True):
+    def delete(self, id=None):
         if self.id:
             id = self.id
         else:
@@ -104,12 +100,7 @@ class Base():
         if not record == None:
             record.updated_at = datetime.now()
             temp_record = record
-            if request.args.get("soft") == "0":
-                soft = False
-            if soft == True:
-                record.deleted = True
-            else:
-                db.session.delete(record)
+            db.session.delete(record)
             db.session.commit()
             print(
                 f"ASTRO: {self.__class__.__name__} record # {record.id} deleted succesfully.\n \n")
@@ -121,7 +112,8 @@ class Base():
 
     def delete_all(self):
         records = self.get_all()
-        if records == []:
+        print(records)
+        if records == None:
             return None
         temp_records = records
         for record in records:

@@ -1,7 +1,16 @@
 from astro import db, tmdb, to_json
 from astro.base.models.base import Base
 from flask import request
-import json
+from astro.genre.models.genre import Genre
+
+
+movie_genres = db.Table(
+    "movie_genres",
+    db.Column("genre_id", db.Integer, db.ForeignKey(
+        "genre.id"), primary_key=True),
+    db.Column("movie_id", db.Integer, db.ForeignKey(
+        "movie.id"), primary_key=True)
+)
 
 
 class Movie(db.Model, Base):
@@ -22,13 +31,18 @@ class Movie(db.Model, Base):
     status = db.Column(db.String)
     tagline = db.Column(db.String)
     tmdb_id = db.Column(db.Integer)
+    movie_genres = db.relationship(
+        "Genre",
+        secondary=movie_genres,
+        lazy="subquery",
+        backref=db.backref("movies", lazy=True)
+    )
 
     def select(self):
         tmdb_id = self.validate_int(request.args.get("tmdb_id"))
         if tmdb_id:
             try:
                 movie = tmdb.Movies(request.args.get("tmdb_id")).info()
-
                 return movie
             except:
                 print(
@@ -59,7 +73,12 @@ class Movie(db.Model, Base):
             if self.check_duplicate(movie.get("tmdb_id")):
                 return None
             else:
-                return self.create(json=movie)
+                movie_record = self.create(json=movie)
+                for genre in movie.get("genres"):
+                    genre_record = Genre().query.filter_by(tmdb_id=genre.get("id")).first()
+                    movie_record.movie_genres.append(genre_record)
+                    db.session.commit()
+                return movie_record
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not imported.\n \n")
