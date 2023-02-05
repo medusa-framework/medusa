@@ -18,7 +18,7 @@ class Genre(db.Model, Base):
             # properly assign ids
             genre["tmdb_id"] = genre.get("id")
             genre["id"] = None
-            if self.check_duplicate(genre.get("tmdb_id")):
+            if self.check_duplicate(genre.get(tmdb_id="tmdb_id")):
                 continue
             else:
                 Genre().create(json=genre)

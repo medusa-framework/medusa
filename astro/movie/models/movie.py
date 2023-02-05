@@ -2,12 +2,21 @@ from astro import db, tmdb, to_json
 from astro.base.models.base import Base
 from flask import request
 from astro.genre.models.genre import Genre
+from astro.language.models.language import Language
 
 
 movie_genres = db.Table(
     "movie_genres",
     db.Column("genre_id", db.Integer, db.ForeignKey(
         "genre.id"), primary_key=True),
+    db.Column("movie_id", db.Integer, db.ForeignKey(
+        "movie.id"), primary_key=True)
+)
+
+movie_spoken_languages = db.Table(
+    "movie_spoken_languages",
+    db.Column("language_id", db.Integer, db.ForeignKey(
+        "language.id"), primary_key=True),
     db.Column("movie_id", db.Integer, db.ForeignKey(
         "movie.id"), primary_key=True)
 )
@@ -34,6 +43,11 @@ class Movie(db.Model, Base):
     movie_genres = db.relationship(
         "Genre",
         secondary=movie_genres,
+        lazy="subquery",
+        backref=db.backref("movies", lazy=True))
+    movie_spoken_languages = db.relationship(
+        "Language",
+        secondary=movie_spoken_languages,
         lazy="subquery",
         backref=db.backref("movies", lazy=True)
     )
@@ -70,7 +84,7 @@ class Movie(db.Model, Base):
         if movie:
             movie["tmdb_id"] = movie.get("id")
             movie["id"] = None
-            if self.check_duplicate(movie.get("tmdb_id")):
+            if self.check_duplicate(tmdb_id=movie.get("tmdb_id")):
                 return None
             else:
                 movie_record = self.create(json=movie)
@@ -78,15 +92,20 @@ class Movie(db.Model, Base):
                     genre_record = Genre().query.filter_by(tmdb_id=genre.get("id")).first()
                     movie_record.movie_genres.append(genre_record)
                     db.session.commit()
+                for language in movie.get("spoken_languages"):
+                    language_record = Language().query.filter_by(
+                        iso_639_1=language.get("iso_639_1")).first()
+                    movie_record.movie_spoken_languages.append(language_record)
+                    db.session.commit()
                 return movie_record
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not imported.\n \n")
             return None
 
-    def check_duplicate(self, tmdb_id):
-        record = self.query.filter_by(tmdb_id=tmdb_id, deleted=False).first()
-        if record:
-            return True
-        else:
-            return False
+    # def check_duplicate(self, tmdb_id):
+    #     record = self.query.filter_by(tmdb_id=tmdb_id, deleted=False).first()
+    #     if record:
+    #         return True
+    #     else:
+    #         return False
