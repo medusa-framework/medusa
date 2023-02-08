@@ -14,14 +14,13 @@ class User(db.Model, Base, UserMixin):
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    def create(self, json=None, **kwargs):
-        if request.json.get("password"):
-            hashed_password = bcrypt.generate_password_hash(
-                request.json.get("password")).decode("utf-8")
-        return super().create(password=hashed_password)
+    def create(self, **kwargs):
+        hashed_password = self.hashed_password()
+        return super().create(password=hashed_password, json=kwargs)
 
-    def register(self, json=None, **kwargs):
-        user = self.create()
+    def register(self, **kwargs):
+        hashed_password = self.hashed_password()
+        user = self.create(password=hashed_password, json=kwargs)
         login_user(user, remember=request.json.get("remember"))
         return current_user
 
@@ -29,7 +28,7 @@ class User(db.Model, Base, UserMixin):
         if request.json.get("email") and request.json.get("password"):
             existing_user = self.query.filter_by(
                 email=request.json.get("email")
-            ).filter_by(deleted=False).first()
+            ).first()
             # compare against saved valid login
             if existing_user and bcrypt.check_password_hash(existing_user.password, request.json.get("password")):
                 # apply logged in status for successful check
@@ -59,3 +58,9 @@ class User(db.Model, Base, UserMixin):
             return temp_user
         else:
             return None
+
+    def hashed_password(self):
+        if request.json.get("password"):
+            hashed_password = bcrypt.generate_password_hash(
+                request.json.get("password")).decode("utf-8")
+            return hashed_password
