@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -7,6 +8,7 @@ from flask_login import LoginManager
 from astro.config.models.config import Config
 from flask_bcrypt import Bcrypt
 import tmdbsimple
+import coloredlogs
 
 
 db = SQLAlchemy()
@@ -28,7 +30,9 @@ def to_json(obj):
 
 
 def create_app():
+    coloredlogs.install()
     app = Flask(__name__)
+    # app.logger.setLevel(logging.DEBUG)
     app.config.from_object(Config)
     db.init_app(app)
     migrate.init_app(app, db)
