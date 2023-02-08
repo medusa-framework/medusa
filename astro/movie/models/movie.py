@@ -1,4 +1,4 @@
-from astro import db, tmdb, to_json
+from astro import db, tmdb
 from astro.base.models.base import Base
 from flask import request
 from astro.genre.models.genre import Genre
@@ -102,10 +102,3 @@ class Movie(db.Model, Base):
             print(
                 f"ASTRO: {self.__class__.__name__} record not imported.\n \n")
             return None
-
-    # def check_duplicate(self, tmdb_id):
-    #     record = self.query.filter_by(tmdb_id=tmdb_id, deleted=False).first()
-    #     if record:
-    #         return True
-    #     else:
-    #         return False
