@@ -27,6 +27,9 @@ class MovieController:
     def select(self):
         return Movie().select()
 
+    def credits(self):
+        return Movie().credits()
+
     def search(self):
         return Movie().search()
 

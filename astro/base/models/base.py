@@ -19,16 +19,19 @@ class Base(CRUD):
     def create(self, **kwargs):
         record = super().create(json=kwargs)
         if record:
-            json = {
-                "action": "create",
-                "status": "successful",
-                "message": f"Record #{record.id} created.",
-                "class_name": self.__class__.__name__,
-                "ip_address": request.remote_addr,
-                "record_id": record.id
-            }
-        ConsoleLog().log_info(json)
-        return self.get(record.id)
+            # json = {
+            #     "action": "create",
+            #     "status": "successful",
+            #     "message": f"Record #{record.id} created.",
+            #     "class_name": self.__class__.__name__,
+            #     "ip_address": request.remote_addr,
+            #     "record_id": record.id
+            # }
+            # ConsoleLog().log_info(json)
+            # print(kwargs)
+            return self.get(record.id)
+        else:
+            return None
 
     def get_all(self, order_by=None):
         records = super().get_all(order_by=order_by)
@@ -54,7 +57,7 @@ class Base(CRUD):
                 "ip_address": request.remote_addr,
                 "record_id": record.id
             }
-            ConsoleLog().log_info(json)
+            # ConsoleLog().log_info(json)
         return super().get(id=id)
 
     def update(self, **kwargs):

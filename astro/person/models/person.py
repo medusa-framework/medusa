@@ -2,17 +2,18 @@ from astro import db, tmdb
 from astro.base.models.base import Base
 from flask import request
 
+# TODO: set up relationships and pivot tables
+
 
 class Person(db.Model, Base):
     birthday = db.Column(db.String)
     known_for_department = db.Column(db.String)
     deathday = db.Column(db.String)
-    tmdb_id = db.Column(db.Integer)
     name = db.Column(db.String)
     # also_known_as = db.relationship("AlsoKnownAs", backref="person", lazy=True)
     # gender = db.Column(db.Integer, db.ForeignKey("gender"))
     biography = db.Column(db.String)
-    popularity = db.column(db.Float)
+    popularity = db.Column(db.Float)
     place_of_birth = db.Column(db.String)
     profile_path = db.Column(db.String)
     adult = db.Column(db.Boolean)
@@ -21,10 +22,10 @@ class Person(db.Model, Base):
     # TODO: external ids and credits
 
     def select(self):
-        tmdb_id = self.validate_int(request.args.get("tmdb_id"))
-        if tmdb_id:
+        id = self.validate_int(request.args.get("id"))
+        if id:
             try:
-                person = tmdb.People(request.args.get("tmdb_id")).info()
+                person = tmdb.People(request.args.get("id")).info()
                 return person
             except:
                 print(
@@ -49,14 +50,9 @@ class Person(db.Model, Base):
     def tmdb_import(self):
         person = self.select()
         if person:
-            person["tmdb_id"] = person.get("id")
-            person["id"] = None
-            if self.check_duplicate(tmdb_id=person.get("tmdb_id")):
-                return None
-            else:
-                person_record = self.create(json=person)
-                db.session.commit()
-                return person_record
+            person_record = self.create(json=person)
+            db.session.commit()
+            return person_record
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not imported.\n \n")

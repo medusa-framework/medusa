@@ -11,12 +11,15 @@ class CRUD:
         model.uuid = str(uuid4())
         model.created_at = datetime.now()
         model.bind_attributes(kwargs)
-        db.session.add(model)
-        db.session.commit()
-        record = model.query.order_by(
-            model.__class__.created_at.desc()).first()
-        delattr(record, "json")
-        return record
+        record = self.check_duplicate(model)
+        if not record:
+            db.session.add(model)
+            db.session.commit()
+            record = model.query.order_by(
+                model.__class__.created_at.desc()).first()
+            return record
+        else:
+            return record
 
     def get_all(self, order_by=None):
         records = self.query.all()
@@ -36,7 +39,6 @@ class CRUD:
             return None
 
     def update(self, **kwargs):
-        # TODO: Make CRUD update use kwargs
         id = self.get_id()
         record = self.query.filter_by(id=id).first()
         if not record == None:
@@ -91,30 +93,48 @@ class CRUD:
         else:
             return None
 
-    def check_duplicate(self, **kwargs):
-        if "iso_639_1" in kwargs:
+    def check_duplicate(self, model):
+        # record = self.query.filter_by(id=model.id).first()
+        if model.__dict__.get("iso_639_1", False):
             record = self.query.filter_by(
-                iso_639_1=kwargs.get("iso_639_1")).first()
-            if record:
-                return True
-        elif "tmdb_id" in kwargs:
-            record = self.query.filter_by(
-                tmdb_id=kwargs.get("tmdb_id")).first()
-            if record:
-                return True
+                iso_639_1=model.iso_639_1).first()
         else:
-            return False
+            record = self.query.filter_by(id=model.id).first()
+        if record:
+            return record
+        return False
+        # if self:
+        #         else:
+        #             return False
+        #     elif self.get("tmdb_id"):
+        #         record = self.query.filter_by(
+        #             tmdb_id=self.get("tmdb_id")).first()
+        #         if record:
+        #             return True
+        #         else:
+        #             return False
+        #     elif self.get("id"):
+        #         record = self.query.filter_by(
+        #             id=self.get("id")).first()
+        #         if record:
+        #             return True
+        #         else:
+        #             return False
+        #     else:
+        #         return False
+        # else:
+        #     return False
 
-    def bind_attributes(self, kwargs=None):
+    def bind_attributes(self, json):
         self.updated_at = datetime.now()
         if request.json:
             for arg in request.json:
                 setattr(self, arg, request.json.get(arg))
-        if kwargs.get("json"):
-            json = kwargs.get("json")
-            if json.get("json"):
-                json = json.get("json")
+        if json.get("json"):
+            self.bind_attributes(json[list(json.keys())[0]])
+        else:
             for arg in json:
                 setattr(self, arg, json.get(arg))
-        for arg in kwargs:
-            setattr(self, arg, kwargs.get(arg))
+
+    def bind_dictionary(self, json):
+        pass

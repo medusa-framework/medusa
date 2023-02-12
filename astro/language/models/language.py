@@ -14,11 +14,8 @@ class Language(db.Model, Base):
         languages = requests.get(url)
         count = 0
         for language in languages.json():
-            if self.check_duplicate(iso_639_1=language.get("iso_639_1")):
-                continue
-            else:
-                Language().create(json=language)
-                count += 1
+            Language().create(json=language)
+            count += 1
         print(
             f"ASTRO: {count} {self.__class__.__name__} records imported.\n \n")
         return self.get_all()
