@@ -1,6 +1,7 @@
 from astro.person.models.person import Person
 from flask import request
-from astro import tmdb, validate_int
+from astro import validate_int
+import tmdbsimple
 
 
 class PersonController:
@@ -32,9 +33,10 @@ class PersonController:
         return Person().select(id)
 
     def search(self):
-        return Person().search()
+        query = request.json.get("name")
+        return Person().search(query=query)
 
     def tmdb_import(self):
         id = request.args.get("id")
         id = validate_int(id)
-        return Person().tmdb_import(tmdb.People(id))
+        return Person().tmdb_import(tmdbsimple.People(id))
