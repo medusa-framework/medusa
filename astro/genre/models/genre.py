@@ -8,6 +8,7 @@ class Genre(db.Model, Base):
     name = db.Column(db.String)
 
     def tmdb_import(self):
+        # TODO: refactor to leverage the tmdb_import function on base
         # get request to find genres
         url = f"https://api.themoviedb.org/3/genre/movie/list?api_key={current_app.config.get('TMDB_API_KEY')}&language=en-US"
         genres = requests.get(url)

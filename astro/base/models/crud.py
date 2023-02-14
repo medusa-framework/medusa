@@ -94,7 +94,6 @@ class CRUD:
             return None
 
     def check_duplicate(self, model):
-        # record = self.query.filter_by(id=model.id).first()
         if model.__dict__.get("iso_639_1", False):
             record = self.query.filter_by(
                 iso_639_1=model.iso_639_1).first()
@@ -103,27 +102,6 @@ class CRUD:
         if record:
             return record
         return False
-        # if self:
-        #         else:
-        #             return False
-        #     elif self.get("tmdb_id"):
-        #         record = self.query.filter_by(
-        #             tmdb_id=self.get("tmdb_id")).first()
-        #         if record:
-        #             return True
-        #         else:
-        #             return False
-        #     elif self.get("id"):
-        #         record = self.query.filter_by(
-        #             id=self.get("id")).first()
-        #         if record:
-        #             return True
-        #         else:
-        #             return False
-        #     else:
-        #         return False
-        # else:
-        #     return False
 
     def bind_attributes(self, json):
         self.updated_at = datetime.now()

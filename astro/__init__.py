@@ -29,6 +29,15 @@ def to_json(obj):
     return json_str
 
 
+def validate_int(id):
+    if isinstance(id, str) and id.isdigit():
+        return int(id)
+    elif isinstance(id, int):
+        return id
+    else:
+        return None
+
+
 def create_app():
     coloredlogs.install()
     app = Flask(__name__)

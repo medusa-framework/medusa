@@ -21,20 +21,9 @@ class Person(db.Model, Base):
     homepage = db.Column(db.String)
     # TODO: external ids and credits
 
-    def select(self):
-        id = self.validate_int(request.args.get("id"))
-        if id:
-            try:
-                person = tmdb.People(request.args.get("id")).info()
-                return person
-            except:
-                print(
-                    f"ASTRO: {self.__class__.__name__} record not found.\n \n")
-                return None
-        else:
-            print(
-                f"ASTRO: {self.__class__.__name__} record not found.\n \n")
-            return None
+    def __init__(self) -> None:
+        self.tmdb_model = tmdb.People
+        super().__init__()
 
     def search(self):
         search = tmdb.Search()
@@ -45,15 +34,4 @@ class Person(db.Model, Base):
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not found.\n \n")
-            return None
-
-    def tmdb_import(self):
-        person = self.select()
-        if person:
-            person_record = self.create(json=person)
-            db.session.commit()
-            return person_record
-        else:
-            print(
-                f"ASTRO: {self.__class__.__name__} record not imported.\n \n")
             return None
