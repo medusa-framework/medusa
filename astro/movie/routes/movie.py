@@ -24,6 +24,11 @@ def select():
     return to_json(MovieController().select())
 
 
+@movie.route("/credits", methods=["POST"])
+def credits():
+    return to_json(MovieController().credits())
+
+
 @movie.route("/tmdb/import", methods=["POST"])
 @login_required
 def tmdb_import():

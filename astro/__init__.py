@@ -29,10 +29,18 @@ def to_json(obj):
     return json_str
 
 
+def validate_int(id):
+    if isinstance(id, str) and id.isdigit():
+        return int(id)
+    elif isinstance(id, int):
+        return id
+    else:
+        return None
+
+
 def create_app():
     coloredlogs.install()
     app = Flask(__name__)
-    # app.logger.setLevel(logging.DEBUG)
     app.config.from_object(Config)
     db.init_app(app)
     migrate.init_app(app, db)
@@ -44,9 +52,11 @@ def create_app():
     from astro.comment.routes.comment import comment
     from astro.genre.routes.genre import genre
     from astro.language.routes.language import language
+    from astro.person.routes.person import person
     app.register_blueprint(user, url_prefix="/api/user")
     app.register_blueprint(movie, url_prefix="/api/movie")
     app.register_blueprint(comment, url_prefix="/api/comment")
     app.register_blueprint(genre, url_prefix="/api/genre")
     app.register_blueprint(language, url_prefix="/api/language")
+    app.register_blueprint(person, url_prefix="/api/person")
     return app

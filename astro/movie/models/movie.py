@@ -1,8 +1,9 @@
-from astro import db, tmdb, to_json
+from astro import db, tmdb
 from astro.base.models.base import Base
 from flask import request
 from astro.genre.models.genre import Genre
 from astro.language.models.language import Language
+from astro.person.models.person import Person
 
 
 movie_genres = db.Table(
@@ -17,6 +18,22 @@ movie_spoken_languages = db.Table(
     "movie_spoken_languages",
     db.Column("language_id", db.Integer, db.ForeignKey(
         "language.id"), primary_key=True),
+    db.Column("movie_id", db.Integer, db.ForeignKey(
+        "movie.id"), primary_key=True)
+)
+
+movie_crew = db.Table(
+    "movie_crew",
+    db.Column("person_id", db.Integer, db.ForeignKey(
+        "person.id"), primary_key=True),
+    db.Column("movie_id", db.Integer, db.ForeignKey(
+        "movie.id"), primary_key=True)
+)
+
+movie_cast = db.Table(
+    "movie_cast",
+    db.Column("person_id", db.Integer, db.ForeignKey(
+        "person.id"), primary_key=True),
     db.Column("movie_id", db.Integer, db.ForeignKey(
         "movie.id"), primary_key=True)
 )
@@ -39,24 +56,40 @@ class Movie(db.Model, Base):
     runtime = db.Column(db.Integer)
     status = db.Column(db.String)
     tagline = db.Column(db.String)
-    tmdb_id = db.Column(db.Integer)
     movie_genres = db.relationship(
         "Genre",
         secondary=movie_genres,
         lazy="subquery",
-        backref=db.backref("movies", lazy=True))
+        backref=db.backref("movies", lazy=True)
+    )
     movie_spoken_languages = db.relationship(
         "Language",
         secondary=movie_spoken_languages,
         lazy="subquery",
         backref=db.backref("movies", lazy=True)
     )
+    movie_crew = db.relationship(
+        "Person",
+        secondary=movie_crew,
+        lazy="subquery",
+        backref=db.backref("movies", lazy=True)
+    )
+    movie_cast = db.relationship(
+        "Person",
+        secondary=movie_cast,
+        lazy="subquery",
+        backref=db.backref("movies2", lazy=True)
+    )
 
-    def select(self):
-        tmdb_id = self.validate_int(request.args.get("tmdb_id"))
-        if tmdb_id:
+    def __init__(self) -> None:
+        self.tmdb_model = tmdb.Movies
+        super().__init__()
+
+    def credits(self):
+        id = self.validate_int(request.args.get("id"))
+        if id:
             try:
-                movie = tmdb.Movies(request.args.get("tmdb_id")).info()
+                movie = tmdb.Movies(request.args.get("id")).credits()
                 return movie
             except:
                 print(
@@ -79,33 +112,42 @@ class Movie(db.Model, Base):
                 f"ASTRO: {self.__class__.__name__} record not found.\n \n")
             return None
 
-    def tmdb_import(self):
-        movie = self.select()
-        if movie:
-            movie["tmdb_id"] = movie.get("id")
-            movie["id"] = None
-            if self.check_duplicate(tmdb_id=movie.get("tmdb_id")):
-                return None
-            else:
-                movie_record = self.create(json=movie)
-                for genre in movie.get("genres"):
-                    genre_record = Genre().query.filter_by(tmdb_id=genre.get("id")).first()
+    def tmdb_import(self, movie_object):
+        if movie_object:
+            movie_record = super().create(json=movie_object.info())
+            for genre in movie_object.genres:
+                genre_record = Genre().query.filter_by(id=genre.get("id")).first()
+                if genre_record:
                     movie_record.movie_genres.append(genre_record)
-                    db.session.commit()
-                for language in movie.get("spoken_languages"):
-                    language_record = Language().query.filter_by(
-                        iso_639_1=language.get("iso_639_1")).first()
-                    movie_record.movie_spoken_languages.append(language_record)
-                    db.session.commit()
-                return movie_record
+            for language in movie_object.spoken_languages:
+                language_record = Language().query.filter_by(
+                    iso_639_1=language.get("iso_639_1")).first()
+                movie_record.movie_spoken_languages.append(language_record)
+            self.tmdb_import_people(movie_record, movie_object)
+            db.session.commit()
+            return self.query.order_by(
+                self.__class__.created_at.desc()).first()
+
         else:
             print(
                 f"ASTRO: {self.__class__.__name__} record not imported.\n \n")
             return None
 
-    # def check_duplicate(self, tmdb_id):
-    #     record = self.query.filter_by(tmdb_id=tmdb_id, deleted=False).first()
-    #     if record:
-    #         return True
-    #     else:
-    #         return False
+    def tmdb_import_person(self, json, movie_record, type):
+        tmdb_person = Person().select(json.get("id"))
+        person_record = Person().create(json=tmdb_person)
+        if person_record:
+            if type == "cast":
+                movie_record.movie_cast.append(person_record)
+            elif type == "crew":
+                movie_record.movie_crew.append(person_record)
+        return movie_record
+
+    def tmdb_import_people(self, movie_record, movie_object):
+        credits = movie_object.credits()
+        for cast in credits.get("cast"):
+            movie_record = self.tmdb_import_person(
+                cast, movie_record, "cast")
+        for crew in credits.get("crew"):
+            movie_record = self.tmdb_import_person(
+                crew, movie_record, "crew")
