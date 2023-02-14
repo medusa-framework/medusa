@@ -1,11 +1,12 @@
-from astro import db, tmdb
+from astro import db
 from astro.base.models.base import Base
-from flask import request
+from astro.tmdb.models.tmdb import TMDB
+import tmdbsimple
 
 # TODO: set up relationships and pivot tables
 
 
-class Person(db.Model, Base):
+class Person(db.Model, Base, TMDB):
     birthday = db.Column(db.String)
     known_for_department = db.Column(db.String)
     deathday = db.Column(db.String)
@@ -22,16 +23,6 @@ class Person(db.Model, Base):
     # TODO: external ids and credits
 
     def __init__(self) -> None:
-        self.tmdb_model = tmdb.People
+        self.tmdb_model = tmdbsimple.People
+        self.type = "person"
         super().__init__()
-
-    def search(self):
-        search = tmdb.Search()
-        name = request.json.get("name")
-        response = search.person(query=name)
-        if response.get("results"):
-            return response.get("results")
-        else:
-            print(
-                f"ASTRO: {self.__class__.__name__} record not found.\n \n")
-            return None

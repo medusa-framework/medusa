@@ -1,10 +1,7 @@
-from datetime import datetime
-from uuid import uuid4
-from astro import db, tmdb
+from astro import db
 from flask import request
 from astro.base.models.crud import CRUD
 from astro.log.models.console_log import ConsoleLog
-from astro.log.models.log import Log
 
 
 class Base(CRUD):
@@ -93,15 +90,3 @@ class Base(CRUD):
 
     def delete_all(self):
         return super().delete_all()
-
-    def select(self, id):
-        try:
-            return self.tmdb_model(id).info()
-        except:
-            return None
-
-    # def tmdb_import(self, json):
-    #     try:
-    #         return self.create(json=json)
-    #     except:
-            # return None

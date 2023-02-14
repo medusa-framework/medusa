@@ -1,9 +1,10 @@
-from astro import db, tmdb
+from astro import db
 from astro.base.models.base import Base
-from flask import request
 from astro.genre.models.genre import Genre
 from astro.language.models.language import Language
 from astro.person.models.person import Person
+from astro.tmdb.models.tmdb import TMDB
+import tmdbsimple
 
 
 movie_genres = db.Table(
@@ -39,7 +40,7 @@ movie_cast = db.Table(
 )
 
 
-class Movie(db.Model, Base):
+class Movie(db.Model, Base, TMDB):
     title = db.Column(db.String(128))
     overview = db.Column(db.String)
     adult = db.Column(db.Boolean)
@@ -82,72 +83,41 @@ class Movie(db.Model, Base):
     )
 
     def __init__(self) -> None:
-        self.tmdb_model = tmdb.Movies
+        self.tmdb_model = tmdbsimple.Movies
+        self.type = "movie"
         super().__init__()
 
-    def credits(self):
-        id = self.validate_int(request.args.get("id"))
-        if id:
-            try:
-                movie = tmdb.Movies(request.args.get("id")).credits()
-                return movie
-            except:
-                print(
-                    f"ASTRO: {self.__class__.__name__} record not found.\n \n")
-                return None
-        else:
-            print(
-                f"ASTRO: {self.__class__.__name__} record not found.\n \n")
-            return None
+    def tmdb_import(self, tmdb_object):
+        record = super().tmdb_import(tmdb_object)
+        for genre in tmdb_object.genres:
+            genre_record = Genre().query.filter_by(id=genre.get("id")).first()
+            if genre_record:
+                record.movie_genres.append(genre_record)
+        for language in tmdb_object.spoken_languages:
+            language_record = Language().query.filter_by(
+                iso_639_1=language.get("iso_639_1")).first()
+            if language_record:
+                record.movie_spoken_languages.append(language_record)
+        self.import_people(record, tmdb_object)
+        db.session.commit()
+        return self.query.order_by(
+            self.__class__.created_at.desc()).first()
 
-    def search(self):
-        search = tmdb.Search()
-        title = request.json.get("title")
-        year = request.json.get("year")
-        response = search.movie(query=title, year=year)
-        if response.get("results"):
-            return response.get("results")
-        else:
-            print(
-                f"ASTRO: {self.__class__.__name__} record not found.\n \n")
-            return None
-
-    def tmdb_import(self, movie_object):
-        if movie_object:
-            movie_record = super().create(json=movie_object.info())
-            for genre in movie_object.genres:
-                genre_record = Genre().query.filter_by(id=genre.get("id")).first()
-                if genre_record:
-                    movie_record.movie_genres.append(genre_record)
-            for language in movie_object.spoken_languages:
-                language_record = Language().query.filter_by(
-                    iso_639_1=language.get("iso_639_1")).first()
-                movie_record.movie_spoken_languages.append(language_record)
-            self.tmdb_import_people(movie_record, movie_object)
-            db.session.commit()
-            return self.query.order_by(
-                self.__class__.created_at.desc()).first()
-
-        else:
-            print(
-                f"ASTRO: {self.__class__.__name__} record not imported.\n \n")
-            return None
-
-    def tmdb_import_person(self, json, movie_record, type):
+    def import_person(self, json, record, type):
         tmdb_person = Person().select(json.get("id"))
         person_record = Person().create(json=tmdb_person)
         if person_record:
             if type == "cast":
-                movie_record.movie_cast.append(person_record)
+                record.movie_cast.append(person_record)
             elif type == "crew":
-                movie_record.movie_crew.append(person_record)
-        return movie_record
+                record.movie_crew.append(person_record)
+        return record
 
-    def tmdb_import_people(self, movie_record, movie_object):
+    def import_people(self, record, movie_object):
         credits = movie_object.credits()
         for cast in credits.get("cast"):
-            movie_record = self.tmdb_import_person(
-                cast, movie_record, "cast")
+            record = self.import_person(
+                cast, record, "cast")
         for crew in credits.get("crew"):
-            movie_record = self.tmdb_import_person(
-                crew, movie_record, "crew")
+            record = self.import_person(
+                crew, record, "crew")
