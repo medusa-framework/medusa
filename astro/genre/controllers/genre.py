@@ -1,4 +1,5 @@
 from astro.genre.models.genre import Genre
+from astro.genre.seeders.genre import genres
 
 
 class GenreController:
@@ -30,5 +31,5 @@ class GenreController:
     def search(self):
         return Genre().search()
 
-    def tmdb_import(self):
-        return Genre().tmdb_import()
+    def seed(self):
+        return Genre().seed(genres)

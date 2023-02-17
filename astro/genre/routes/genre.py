@@ -14,10 +14,10 @@ def create():
     return to_json(BaseController(Genre()).create())
 
 
-@genre.route("/import", methods=["POST"])
+@genre.route("/seed", methods=["POST"])
 @login_required
-def tmdb_import():
-    return to_json(GenreController().tmdb_import())
+def seed():
+    return to_json(GenreController().seed())
 
 
 @genre.route("/get/all", methods=["GET"])
