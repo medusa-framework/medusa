@@ -14,10 +14,10 @@ def create():
     return to_json(BaseController(Language()).create())
 
 
-@language.route("/import", methods=["POST"])
+@language.route("/seed", methods=["POST"])
 @login_required
-def tmdb_import():
-    return to_json(LanguageController().tmdb_import())
+def seed():
+    return to_json(LanguageController().seed())
 
 
 @language.route("/get/all", methods=["GET"])

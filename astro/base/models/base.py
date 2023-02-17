@@ -90,3 +90,8 @@ class Base(CRUD):
 
     def delete_all(self):
         return super().delete_all()
+
+    def seed(self, seeds):
+        for seed in seeds:
+            self.create(json=seed)
+        return self.get_all()

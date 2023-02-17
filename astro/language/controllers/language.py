@@ -1,4 +1,5 @@
 from astro.language.models.language import Language
+from astro.language.seeders.language import languages
 
 
 class LanguageController:
@@ -30,5 +31,5 @@ class LanguageController:
     def search(self):
         return Language().search()
 
-    def tmdb_import(self):
-        return Language().tmdb_import()
+    def seed(self):
+        return Language().seed(languages)
