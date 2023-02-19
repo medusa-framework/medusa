@@ -1,3 +1,5 @@
+import random
+from faker import Faker
 from astro import db
 from astro.base.models.base import Base
 from astro.genre.models.genre import Genre
@@ -105,7 +107,7 @@ class Movie(db.Model, Base, TMDB):
 
     def import_person(self, json, record, type):
         tmdb_person = Person().select(json.get("id"))
-        person_record = Person().create(json=tmdb_person)
+        person_record = Person().create(json=tmdb_person.info())
         if person_record:
             if type == "cast":
                 record.movie_cast.append(person_record)
@@ -121,3 +123,72 @@ class Movie(db.Model, Base, TMDB):
         for crew in credits.get("crew"):
             record = self.import_person(
                 crew, record, "crew")
+
+    def random_movie(self):
+        random_id = random.randint(1, 9999999)
+        try:
+            random_movie = self.select(random_id)
+            return random_movie
+        except:
+            self.random_movie()
+
+    def factory_create(self, count):
+        current = 0
+        while current < int(count):
+            random_movie = self.random_movie()
+            if random_movie:
+                self.tmdb_import(random_movie)
+                current += 1
+        return self.query.order_by(
+            self.__class__.created_at.desc()).limit(count).all()
+
+        # faker = Faker()
+        # title = faker.sentence(nb_words=random.randint(
+        #     1, 4)).title()[:-1]
+        # overview = faker.paragraph(nb_sentences=random.randint(
+        #     2, 8))
+        # budget = random.randint(50000, 900000000)
+        # homepage = faker.url()
+        # imdb_id = "tt" + str(random.randint(100000, 9999999))
+        # languages = ["en", "es", "de", "ru", "ko", "lo"]
+        # original_language = random.choice(languages)
+        # popularity = round(random.uniform(00.01, 100.00), 2)
+        # release_date = faker.date()
+        # runtime = random.randint(90, 120)
+        # statuses = ["Rumored", "Planned", "In Production",
+        #             "Post Production", "Released", "Canceled"]
+        # status = random.choice(statuses)
+        # tagline = faker.sentence(nb_words=10)
+        # movie_genres = random.choices(
+        #     Genre().query.all(), k=random.randint(1, 4))
+        # movie_spoken_languages = random.choices(
+        #     Language().query.all(), k=random.randint(1, 2))
+        # movie_cast = random.choices(
+        #     Person().query.all(), k=random.randint(5, 10))
+        # movie_crew = random.choices(
+        #     Person().query.all(), k=random.randint(5, 10))
+        # id = random.randint(10000000, 99999999)
+        # print(id)
+        # json = {
+        #     "title": title,
+        #     "overview": overview,
+        #     "adult": False,
+        #     "backdrop_path": "/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg",
+        #     "budget": budget,
+        #     "homepage": homepage,
+        #     "imdb_id": imdb_id,
+        #     "original_language": original_language,
+        #     "original_title": title,
+        #     "popularity": popularity,
+        #     "poster_path": "/fIE3lAGcZDV1G6XM5KmuWnNsPp1.jpg",
+        #     "release_date": release_date,
+        #     "revenue": budget,
+        #     "runtime": runtime,
+        #     "status": status,
+        #     "tagline": tagline,
+        #     "movie_genres": movie_genres,
+        #     "movie_spoken_languages": movie_spoken_languages,
+        #     "movie_cast": movie_cast,
+        #     "movie_crew": movie_crew,
+        #     # "id": id
+        # }
