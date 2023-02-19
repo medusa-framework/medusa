@@ -2,6 +2,7 @@ from astro import db, login_manager, bcrypt
 from astro.base.models.base import Base
 from flask_login import login_user, logout_user, current_user, UserMixin
 from flask import request
+from faker import Faker
 
 
 class User(db.Model, Base, UserMixin):
@@ -15,10 +16,15 @@ class User(db.Model, Base, UserMixin):
         return User.query.get(int(user_id))
 
     def create(self, **kwargs):
-        hashed_password = self.hashed_password()
-        return super().create(password=hashed_password, json=kwargs)
+        hashed_password = self.hashed_password(json=kwargs)
+        if kwargs.get("json"):
+            kwargs["json"]["password"] = hashed_password
+        else:
+            kwargs["password"] = hashed_password
+        return super().create(json=kwargs)
 
     def register(self, **kwargs):
+        # don't need hashed password as kwarg
         hashed_password = self.hashed_password()
         user = self.create(password=hashed_password, json=kwargs)
         login_user(user, remember=request.json.get("remember"))
@@ -59,8 +65,25 @@ class User(db.Model, Base, UserMixin):
         else:
             return None
 
-    def hashed_password(self):
+    def hashed_password(self, json=None):
         if request.json.get("password"):
             hashed_password = bcrypt.generate_password_hash(
                 request.json.get("password")).decode("utf-8")
-            return hashed_password
+        elif json.get("json", {}).get("password"):
+            hashed_password = bcrypt.generate_password_hash(
+                json.get("json", {}).get("password")).decode("utf-8")
+        else:
+            hashed_password = bcrypt.generate_password_hash(
+                "password123").decode("utf-8")
+        return hashed_password
+
+    def factory(self):
+        faker = Faker()
+        username = faker.name().replace(" ", "")
+        email = faker.email()
+        json = {
+            "username": username,
+            "password": "123",
+            "email": email
+        }
+        return json

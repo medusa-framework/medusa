@@ -1,5 +1,6 @@
 from astro import to_json
 from astro.base.models.base import Base
+from flask import request
 
 
 class BaseController():
@@ -27,3 +28,7 @@ class BaseController():
 
     def update(self):
         return self.model.update()
+
+    def factory(self):
+        count = request.args.get("count")
+        return self.model.factory_create(count)

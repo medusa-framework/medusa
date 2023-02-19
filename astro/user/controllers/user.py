@@ -1,8 +1,9 @@
+from astro.base.controllers.base import BaseController
 from astro.user.models.user import User
 from flask import request
 
 
-class UserController:
+class UserController(BaseController):
 
     def login(self):
         return User().login()

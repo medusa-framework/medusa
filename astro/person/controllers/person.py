@@ -30,7 +30,10 @@ class PersonController:
     def select(self):
         id = request.args.get("id")
         id = validate_int(id)
-        return Person().select(id)
+        try:
+            return Person().select(id).info()
+        except:
+            return None
 
     def search(self):
         query = request.json.get("name")

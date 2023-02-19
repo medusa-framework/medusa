@@ -12,8 +12,11 @@ class TMDB():
 
     def select(self, id):
         try:
-            return self.tmdb_model(id).info()
+            info = self.tmdb_model(id).info()
+            print("Success", id)
+            return self.tmdb_model(id)
         except:
+            print("Failed", id)
             return None
 
     def search(self, query=None, year=None):

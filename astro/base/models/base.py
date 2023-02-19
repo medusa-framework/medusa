@@ -1,3 +1,4 @@
+from faker import Faker
 from astro import db
 from flask import request
 from astro.base.models.crud import CRUD
@@ -16,16 +17,6 @@ class Base(CRUD):
     def create(self, **kwargs):
         record = super().create(json=kwargs)
         if record:
-            # json = {
-            #     "action": "create",
-            #     "status": "successful",
-            #     "message": f"Record #{record.id} created.",
-            #     "class_name": self.__class__.__name__,
-            #     "ip_address": request.remote_addr,
-            #     "record_id": record.id
-            # }
-            # ConsoleLog().log_info(json)
-            # print(kwargs)
             return self.get(record.id)
         else:
             return None
@@ -95,3 +86,15 @@ class Base(CRUD):
         for seed in seeds:
             self.create(json=seed)
         return self.get_all()
+
+    def factory(self):
+        return None
+
+    def factory_create(self, count):
+        if self.factory():
+            for i in range(int(count)):
+                json = self.factory()
+                self.create(json=json)
+            return self.get_all()
+        else:
+            return None

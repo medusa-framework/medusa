@@ -27,6 +27,11 @@ def logout():
     return to_json(UserController().logout())
 
 
+@user.route("/factory", methods=["POST"])
+def factory():
+    return to_json(UserController().factory())
+
+
 @user.route("/current", methods=["GET"])
 def current():
     return to_json(UserController().current())

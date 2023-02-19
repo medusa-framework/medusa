@@ -13,6 +13,12 @@ def create():
     return to_json(BaseController(Comment()).create())
 
 
+@comment.route("/factory", methods=["POST"])
+@login_required
+def factory():
+    return to_json(BaseController(Comment()).factory())
+
+
 @comment.route("/get/all", methods=["GET"])
 def get_all():
     return to_json(BaseController(Comment()).get_all())
