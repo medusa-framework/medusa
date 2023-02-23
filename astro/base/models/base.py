@@ -3,9 +3,10 @@ from astro import db
 from flask import request
 from astro.base.models.crud import CRUD
 from astro.log.models.console_log import ConsoleLog
+from astro.utils.models.utils import Utils
 
 
-class Base(CRUD):
+class Base(CRUD, Utils):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String())
     created_at = db.Column(db.DateTime)

@@ -1,4 +1,3 @@
-from astro import to_json
 from astro.base.models.base import Base
 from flask import request
 

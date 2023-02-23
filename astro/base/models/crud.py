@@ -85,14 +85,6 @@ class CRUD:
             record.delete()
         return temp_records
 
-    def validate_int(self, id):
-        if isinstance(id, str) and id.isdigit():
-            return int(id)
-        elif isinstance(id, int):
-            return id
-        else:
-            return None
-
     def check_duplicate(self, model):
         if model.__dict__.get("iso_639_1", False):
             record = self.query.filter_by(
@@ -113,6 +105,3 @@ class CRUD:
         else:
             for arg in json:
                 setattr(self, arg, json.get(arg))
-
-    def bind_dictionary(self, json):
-        pass
