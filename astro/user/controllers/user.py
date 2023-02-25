@@ -1,6 +1,5 @@
 from astro.base.controllers.base import BaseController
 from astro.user.models.user import User
-from flask import request
 
 
 class UserController(BaseController):

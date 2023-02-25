@@ -1,12 +1,10 @@
-from faker import Faker
 from astro import db
 from flask import request
 from astro.base.models.crud import CRUD
 from astro.log.models.console_log import ConsoleLog
-from astro.utils.models.utils import Utils
 
 
-class Base(CRUD, Utils):
+class Base(CRUD):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String())
     created_at = db.Column(db.DateTime)
@@ -60,8 +58,10 @@ class Base(CRUD, Utils):
                 "ip_address": request.remote_addr,
                 "record_id": record.id
             }
-        ConsoleLog().log_info(json)
-        return super().get(record.id)
+            ConsoleLog().log_info(json)
+            return super().get(record.id)
+        else:
+            return None
 
     def update_all(self, **kwargs):
         return super().update_all(json=kwargs)

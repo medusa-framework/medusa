@@ -1,6 +1,6 @@
 from astro.base.controllers.base import BaseController
 from astro.movie.models.movie import Movie
-from astro.utils.models.utils import Utils
+from astro.utils.functions.utils import validate_int
 from flask import request
 import tmdbsimple
 
@@ -8,7 +8,7 @@ import tmdbsimple
 class MovieController(BaseController):
     def select(self):
         id = request.args.get("id")
-        id = Utils().validate_int(id)
+        id = validate_int(id)
         try:
             return Movie().select(id).info()
         except:
@@ -27,5 +27,5 @@ class MovieController(BaseController):
 
     def tmdb_import(self):
         id = request.args.get("id")
-        id = Utils().validate_int(id)
+        id = validate_int(id)
         return Movie().tmdb_import(tmdbsimple.Movies(id))

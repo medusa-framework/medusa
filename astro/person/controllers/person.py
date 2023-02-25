@@ -1,6 +1,6 @@
 from astro.person.models.person import Person
 from flask import request
-from astro.utils.models.utils import Utils
+from astro.utils.functions.utils import validate_int
 import tmdbsimple
 
 
@@ -29,7 +29,7 @@ class PersonController:
 
     def select(self):
         id = request.args.get("id")
-        id = Utils().validate_int(id)
+        id = validate_int(id)
         try:
             return Person().select(id).info()
         except:
@@ -41,5 +41,5 @@ class PersonController:
 
     def tmdb_import(self):
         id = request.args.get("id")
-        id = Utils().validate_int(id)
+        id = validate_int(id)
         return Person().tmdb_import(tmdbsimple.People(id))

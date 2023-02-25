@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 from astro import db
 from flask import request
+from astro.utils.functions.utils import validate_int
 
 
 class CRUD:
@@ -54,7 +55,7 @@ class CRUD:
             id = request.args.get("id")
         if self.id:
             id = self.id
-        return self.validate_int(id)
+        return validate_int(id)
 
     def update_all(self, **kwargs):
         records = self.get_all()
