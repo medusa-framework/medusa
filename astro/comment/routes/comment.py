@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_login import login_required
 from astro.base.controllers.base import BaseController
 from astro.comment.models.comment import Comment
-from astro import to_json
+from astro.utils.functions.utils import to_json
 
 comment = Blueprint("comment", __name__)
 

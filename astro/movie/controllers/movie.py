@@ -1,6 +1,6 @@
 from astro.base.controllers.base import BaseController
 from astro.movie.models.movie import Movie
-from astro import validate_int
+from astro.utils.functions.utils import validate_int
 from flask import request
 import tmdbsimple
 

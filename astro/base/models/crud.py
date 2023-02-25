@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 from astro import db
 from flask import request
+from astro.utils.functions.utils import validate_int
 
 
 class CRUD:
@@ -54,7 +55,7 @@ class CRUD:
             id = request.args.get("id")
         if self.id:
             id = self.id
-        return self.validate_int(id)
+        return validate_int(id)
 
     def update_all(self, **kwargs):
         records = self.get_all()
@@ -85,14 +86,6 @@ class CRUD:
             record.delete()
         return temp_records
 
-    def validate_int(self, id):
-        if isinstance(id, str) and id.isdigit():
-            return int(id)
-        elif isinstance(id, int):
-            return id
-        else:
-            return None
-
     def check_duplicate(self, model):
         if model.__dict__.get("iso_639_1", False):
             record = self.query.filter_by(
@@ -113,6 +106,3 @@ class CRUD:
         else:
             for arg in json:
                 setattr(self, arg, json.get(arg))
-
-    def bind_dictionary(self, json):
-        pass

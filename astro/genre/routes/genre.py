@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_login import login_required
-from astro import to_json
+from astro.utils.functions.utils import to_json
 from astro.genre.models.genre import Genre
 from astro.base.controllers.base import BaseController
 from astro.genre.controllers.genre import GenreController

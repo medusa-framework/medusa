@@ -1,6 +1,6 @@
 from astro.person.models.person import Person
 from flask import request
-from astro import validate_int
+from astro.utils.functions.utils import validate_int
 import tmdbsimple
 
 

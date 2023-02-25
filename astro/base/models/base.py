@@ -1,4 +1,3 @@
-from faker import Faker
 from astro import db
 from flask import request
 from astro.base.models.crud import CRUD
@@ -59,8 +58,10 @@ class Base(CRUD):
                 "ip_address": request.remote_addr,
                 "record_id": record.id
             }
-        ConsoleLog().log_info(json)
-        return super().get(record.id)
+            ConsoleLog().log_info(json)
+            return super().get(record.id)
+        else:
+            return None
 
     def update_all(self, **kwargs):
         return super().update_all(json=kwargs)

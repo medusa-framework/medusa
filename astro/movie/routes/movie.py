@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_login import login_required
-from astro import to_json
+from astro.utils.functions.utils import to_json
 from astro.movie.models.movie import Movie
 from astro.base.controllers.base import BaseController
 from astro.movie.controllers.movie import MovieController

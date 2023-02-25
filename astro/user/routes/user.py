@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_login import login_required
-from astro import to_json
+from astro.utils.functions.utils import to_json
 from astro.user.models.user import User
 from astro.base.controllers.base import BaseController
 from astro.user.controllers.user import UserController
@@ -14,27 +14,27 @@ def create():
 
 @user.route("/register", methods=["POST"])
 def register():
-    return to_json(UserController().register())
+    return to_json(UserController(User()).register())
 
 
 @user.route("/login", methods=["POST"])
 def login():
-    return to_json(UserController().login())
+    return to_json(UserController(User()).login())
 
 
 @user.route("/logout", methods=["POST"])
 def logout():
-    return to_json(UserController().logout())
+    return to_json(UserController(User()).logout())
 
 
 @user.route("/factory", methods=["POST"])
 def factory():
-    return to_json(UserController().factory())
+    return to_json(UserController(User()).factory())
 
 
 @user.route("/current", methods=["GET"])
 def current():
-    return to_json(UserController().current())
+    return to_json(UserController(User()).current())
 
 
 @user.route("/get/all", methods=["GET"])
@@ -49,7 +49,7 @@ def get():
 
 @user.route("/comments", methods=["GET"])
 def comments():
-    return to_json(UserController().comments())
+    return to_json(UserController(User()).comments())
 
 
 @user.route("/delete/all", methods=["DELETE"])
