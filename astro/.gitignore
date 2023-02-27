@@ -9,6 +9,7 @@ __pycache__/
 # Personal Projects
 other/
 docs/examples/
+sandbox/
 
 # Migrations
 migrations/
