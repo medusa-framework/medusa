@@ -1,8 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 from astro import db
-from flask import request
-from astro.utils.functions.utils import validate_int
+from astro.utils.functions.utils import validate_int, kwargs_get
 
 
 class CRUD:
@@ -33,14 +32,15 @@ class CRUD:
         else:
             return None
 
-    def get(self, id=None):
-        if self.get_id(id):
-            return self.query.filter_by(id=self.get_id(id)).first()
+    def get(self, id):
+        if validate_int(id):
+            return self.query.filter_by(id=id).first()
         else:
             return None
 
     def update(self, **kwargs):
-        id = self.get_id()
+        id = kwargs_get(kwargs, "id")
+        print(id)
         record = self.query.filter_by(id=id).first()
         if not record == None:
             record.updated_at = datetime.now()
@@ -50,23 +50,17 @@ class CRUD:
         else:
             return None
 
-    def get_id(self, id=None):
-        if not id and request.args.get("id"):
-            id = request.args.get("id")
-        if self.id:
-            id = self.id
-        return validate_int(id)
-
     def update_all(self, **kwargs):
         records = self.get_all()
         if records == []:
             return None
         for record in records:
+            kwargs["id"] = record.id
             record.update(json=kwargs)
         return self.get_all(order_by="updated_at")
 
-    def delete(self, id=None):
-        id = self.get_id()
+    def delete(self, id):
+        id = validate_int(id)
         record = self.query.filter_by(id=id).first()
         if not record == None:
             record.updated_at = datetime.now()
@@ -98,11 +92,8 @@ class CRUD:
 
     def bind_attributes(self, json):
         self.updated_at = datetime.now()
-        if request.json:
-            for arg in request.json:
-                setattr(self, arg, request.json.get(arg))
-        if json.get("json"):
-            self.bind_attributes(json[list(json.keys())[0]])
+        if "json" in json.keys():
+            return self.bind_attributes(json.get("json"))
         else:
             for arg in json:
                 setattr(self, arg, json.get(arg))

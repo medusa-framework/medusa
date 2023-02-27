@@ -20,3 +20,11 @@ def serialize(obj):
 def to_json(obj):
     json_str = json.dumps(obj, default=serialize)
     return json_str
+
+
+def kwargs_get(json, key):
+    if json.get(key):
+        return json.get(key)
+    else:
+        if "json" in json.keys():
+            return kwargs_get(json.get("json"), key)

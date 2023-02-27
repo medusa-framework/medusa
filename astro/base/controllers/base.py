@@ -1,4 +1,5 @@
 from flask import request
+from flask_login import current_user
 
 
 class BaseController():
@@ -7,25 +8,34 @@ class BaseController():
         self.model = model
 
     def create(self):
-        return self.model.create()
+        json = request.json
+        if not json.get("user_id") and current_user:
+            json["user_id"] = current_user.id
+        return self.model.create(json=json)
 
     def get_all(self):
         return self.model.get_all()
 
     def get(self):
-        return self.model.get()
+        id = request.args.get("id")
+        return self.model.get(id)
 
     def delete_all(self):
         return self.model.delete_all()
 
     def delete(self):
-        return self.model.delete()
+        id = request.args.get("id")
+        return self.model.delete(id)
 
     def update_all(self):
-        return self.model.update_all()
+        json = request.json
+        return self.model.update_all(json=json)
 
     def update(self):
-        return self.model.update()
+        json = request.json
+        id = request.args.get("id")
+        json["id"] = id
+        return self.model.update(json=json)
 
     def factory(self):
         count = request.args.get("count")
