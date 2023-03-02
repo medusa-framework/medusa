@@ -1,4 +1,4 @@
-from . import create_app
+from astro import create_app
 
 app = create_app()
 

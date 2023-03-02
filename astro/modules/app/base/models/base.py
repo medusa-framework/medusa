@@ -1,12 +1,16 @@
 from astro import db
 from astro.modules.app.base.models.crud import CRUD
+from astro.modules.app.base.routes.base import BaseRoute
 
 
-class Base(CRUD):
+class Base(BaseRoute, CRUD):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String())
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
+
+    def __init__(self):
+        return super().__init__()
 
     def __repr__(self) -> str:
         return str(self.__dict__)
@@ -52,3 +56,9 @@ class Base(CRUD):
             return self.get_all()
         else:
             return None
+
+    def model(self):
+        return self.__class__()
+
+
+Base()

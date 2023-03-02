@@ -5,11 +5,14 @@ from flask import request
 from faker import Faker
 
 
-class User(db.Model, Base, UserMixin):
+class User(Base, db.Model, UserMixin):
     username = db.Column(db.String(128))
     password = db.Column(db.String())
     email = db.Column(db.String(120))
-    comments = db.relationship("Comment", backref="user", lazy=True)
+    # comments = db.relationship("Comment", backref="user", lazy=True)
+
+    def __init__(self):
+        return super().__init__()
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -87,3 +90,6 @@ class User(db.Model, Base, UserMixin):
             "email": email
         }
         return json
+
+
+User()
