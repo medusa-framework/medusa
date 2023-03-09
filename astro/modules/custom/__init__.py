@@ -1,5 +1,4 @@
 import os
-
 for module in os.listdir(os.path.dirname(__file__)):
     if (
         "__init__" in module or

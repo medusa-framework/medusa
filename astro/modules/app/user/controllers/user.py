@@ -1,23 +1,15 @@
-from flask import request
 from astro.modules.app.base.controllers.base import BaseController
-from astro.modules.app.user.models.user import User
 
 
 class UserController(BaseController):
-
     def login(self):
-        return User().login()
+        return self.model.login()
 
     def current(self):
-        return User().current()
+        return self.model.current()
 
     def logout(self):
-        return User().logout()
+        return self.model.logout()
 
     def register(self):
-        return User().register()
-
-    def comments(self):
-        id = request.args.get("id")
-        user = User().get(id)
-        return user.comments
+        return self.model.register()

@@ -1,15 +1,22 @@
-from astro import db, login_manager, bcrypt
-from astro.modules.app.base.models.base import Base
-from flask_login import login_user, logout_user, current_user, UserMixin
-from flask import request
 from faker import Faker
+from flask import request
+from flask_login import login_user, current_user, logout_user
+from astro import db, bcrypt, login_manager
+from astro.modules.app.base.models.base import Base
+from astro.modules.app.user.controllers.user import UserController
+from flask_login import UserMixin
+from astro.modules.app.user.routes.user import UserRoute
 
 
-class User(db.Model, Base, UserMixin):
+class User(Base, UserRoute, db.Model, UserMixin):
+
     username = db.Column(db.String(128))
     password = db.Column(db.String())
     email = db.Column(db.String(120))
-    comments = db.relationship("Comment", backref="user", lazy=True)
+
+    def __init__(self) -> None:
+        self._controller = UserController(self)
+        super().__init__()
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -87,3 +94,6 @@ class User(db.Model, Base, UserMixin):
             "email": email
         }
         return json
+
+
+User()

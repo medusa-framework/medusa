@@ -3,7 +3,6 @@ from flask_login import current_user
 
 
 class BaseController():
-
     def __init__(self, model) -> None:
         self.model = model
 
@@ -29,6 +28,7 @@ class BaseController():
 
     def update_all(self):
         json = request.json
+        print(json)
         return self.model.update_all(json=json)
 
     def update(self):
