@@ -1,0 +1,10 @@
+coloredlogs==15.0.1
+Faker==17.6.0
+Flask==2.0.1
+Flask_Bcrypt==1.0.1
+Flask_Login==0.6.2
+Flask_Migrate==4.0.2
+flask_sqlalchemy==3.0.3
+python-dotenv==1.0.0
+
+
