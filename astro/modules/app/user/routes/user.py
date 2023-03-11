@@ -23,4 +23,9 @@ class UserRoute(BaseRoute):
         def current():
             return to_json(self._controller.current())
 
+        @self._blueprint.route('/comments', methods=["GET"])
+        @login_required
+        def comments():
+            return to_json(self._controller.comments())
+
         return super().routes()

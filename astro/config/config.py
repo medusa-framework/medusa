@@ -12,7 +12,7 @@ class Config:
     # IMAGE_ROOT = os.environ.get("IMAGE_ROOT")
 
     SECRET_KEY = "ko9bMII1YzHceERWCzDqcw"
-    SQLALCHEMY_DATABASE_URI = "postgresql:///tux"
+    SQLALCHEMY_DATABASE_URI = "postgresql:///astro"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIC_FOLDER = "/public"
     IMAGE_ROOT = "public/files/img"

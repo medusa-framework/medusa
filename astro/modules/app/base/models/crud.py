@@ -74,10 +74,9 @@ class CRUD:
         records = self.get_all()
         if records == None:
             return None
-        temp_records = records
         for record in records:
-            record.delete()
-        return temp_records
+            record.delete(record.id)
+        return None
 
     def check_duplicate(self, model):
         if model.__dict__.get("iso_639_1", False):
