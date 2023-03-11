@@ -13,6 +13,7 @@ class User(Base, UserRoute, db.Model, UserMixin):
     username = db.Column(db.String(128))
     password = db.Column(db.String())
     email = db.Column(db.String(120))
+    comments = db.relationship("Comment", backref="user", lazy=True)
 
     def __init__(self) -> None:
         self._controller = UserController(self)

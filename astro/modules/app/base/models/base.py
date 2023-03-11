@@ -16,7 +16,7 @@ def to_json(obj):
     return json_str
 
 
-class Base(CRUD, BaseRoute):
+class Base(BaseRoute, CRUD):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String())
     created_at = db.Column(db.DateTime)
