@@ -28,4 +28,9 @@ class UserRoute(BaseRoute):
         def comments():
             return to_json(self._controller.comments())
 
+        @self._blueprint.route('/notifications', methods=["GET"])
+        @login_required
+        def notifications():
+            return to_json(self._controller.notifications())
+
         return super().routes()

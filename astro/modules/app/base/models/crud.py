@@ -40,6 +40,7 @@ class CRUD:
 
     def update(self, **kwargs):
         id = kwargs_get(kwargs, "id")
+        id = validate_int(id)
         record = self.query.filter_by(id=id).first()
         if not record == None:
             record.updated_at = datetime.now()
