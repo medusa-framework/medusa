@@ -19,3 +19,8 @@ class UserController(BaseController):
         id = request.args.get("id")
         user = self.model.get(id)
         return user.comments
+
+    def notifications(self):
+        id = request.args.get("id")
+        user = self.model.get(id)
+        return user.notifications
