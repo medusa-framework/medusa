@@ -1,19 +1,6 @@
 from astro import db
-from datetime import datetime
 from astro.modules.app.base.models.crud import CRUD
 from astro.modules.app.base.routes.base import BaseRoute
-import json
-
-
-def serialize(obj):
-    if isinstance(obj, datetime):
-        return obj.isoformat()
-    return {k: v for k, v in obj.__dict__.items() if not k.startswith('_')}
-
-
-def to_json(obj):
-    json_str = json.dumps(obj, default=serialize)
-    return json_str
 
 
 class Base(BaseRoute, CRUD):
@@ -29,7 +16,6 @@ class Base(BaseRoute, CRUD):
         return self.__class__()
 
     def create(self, **kwargs):
-        print(super())
         record = super().create(json=kwargs)
         if record:
             return self.get(record.id)
