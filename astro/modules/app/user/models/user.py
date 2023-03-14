@@ -25,12 +25,16 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return User.query.get(int(user_id))
 
     def create(self, **kwargs):
-        hashed_password = self.hashed_password(json=kwargs)
-        if kwargs.get("json"):
-            kwargs["json"]["password"] = hashed_password
-        else:
-            kwargs["password"] = hashed_password
+        kwargs = self.bind_hashed_password(kwargs)
         return super().create(json=kwargs)
+
+    def update(self, **kwargs):
+        kwargs = self.bind_hashed_password(kwargs)
+        return super().update(json=kwargs)
+
+    def update_all(self, **kwargs):
+        kwargs = self.bind_hashed_password(kwargs)
+        return super().update_all(json=kwargs)
 
     def register(self, **kwargs):
         # don't need hashed password as kwarg
@@ -85,6 +89,14 @@ class User(Base, UserRoute, db.Model, UserMixin):
             hashed_password = bcrypt.generate_password_hash(
                 "password123").decode("utf-8")
         return hashed_password
+
+    def bind_hashed_password(self, kwargs):
+        hashed_password = self.hashed_password(json=kwargs)
+        if kwargs.get("json"):
+            kwargs["json"]["password"] = hashed_password
+        else:
+            kwargs["password"] = hashed_password
+        return kwargs
 
     def factory(self):
         faker = Faker()
