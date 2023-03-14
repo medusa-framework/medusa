@@ -33,4 +33,9 @@ class UserRoute(BaseRoute):
         def notifications():
             return to_json(self._controller.notifications())
 
+        @self._blueprint.route('/delete_user_comments', methods=["DELETE"])
+        @login_required
+        def delete_user_comments():
+            return to_json(self._controller.delete_user_comments())
+
         return super().routes()
