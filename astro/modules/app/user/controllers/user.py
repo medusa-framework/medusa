@@ -20,6 +20,10 @@ class UserController(BaseController):
         user = self.model.get(id)
         return user.comments
 
+    def delete_user_comments(self):
+        comments = self.comments()
+        return self.model.delete_user_comments(comments)
+
     def notifications(self):
         id = request.args.get("id")
         user = self.model.get(id)

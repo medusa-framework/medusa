@@ -109,5 +109,12 @@ class User(Base, UserRoute, db.Model, UserMixin):
         }
         return json
 
+    def delete_user_comments(self, comments):
+        if comments == None:
+            return None
+        for comment in comments:
+            comment.delete(comment.id)
+        return None
+
 
 User()
