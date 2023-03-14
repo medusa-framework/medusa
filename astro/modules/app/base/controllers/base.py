@@ -39,3 +39,6 @@ class BaseController():
     def factory(self):
         count = request.args.get("count")
         return self.model.factory_create(count)
+
+    def seed(self):
+        return self.model.seed(self.model._seeds)

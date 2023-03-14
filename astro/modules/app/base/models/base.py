@@ -29,7 +29,6 @@ class Base(BaseRoute, CRUD):
         return self.__class__()
 
     def create(self, **kwargs):
-        print(super())
         record = super().create(json=kwargs)
         if record:
             return self.get(record.id)
