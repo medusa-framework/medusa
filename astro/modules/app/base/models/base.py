@@ -9,6 +9,10 @@ class Base(BaseRoute, CRUD):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 
+    def __init__(self) -> None:
+        self._seeds = None
+        super().__init__()
+
     def __repr__(self) -> str:
         return str(self.__dict__)
 
@@ -40,10 +44,10 @@ class Base(BaseRoute, CRUD):
     def delete_all(self):
         return super().delete_all()
 
-    def seed(self, seeds):
-        for seed in seeds:
-            self.create(json=seed)
-        return self.get_all()
+    def seed(self):
+        if not self.get_all():
+            for seed in self._seeds:
+                self.create(json=seed)
 
     def factory(self):
         return None

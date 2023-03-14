@@ -6,6 +6,7 @@ from astro.modules.app.base.models.base import Base
 from astro.modules.app.user.controllers.user import UserController
 from flask_login import UserMixin
 from astro.modules.app.user.routes.user import UserRoute
+from astro.modules.app.user.seeders.user import users as seeds
 
 
 class User(Base, UserRoute, db.Model, UserMixin):
@@ -18,6 +19,7 @@ class User(Base, UserRoute, db.Model, UserMixin):
 
     def __init__(self) -> None:
         self._controller = UserController(self)
+        self._seeds = seeds
         super().__init__()
 
     @login_manager.user_loader
@@ -79,7 +81,7 @@ class User(Base, UserRoute, db.Model, UserMixin):
             return None
 
     def hashed_password(self, json=None):
-        if request.json.get("password"):
+        if request and request.json.get("password"):
             hashed_password = bcrypt.generate_password_hash(
                 request.json.get("password")).decode("utf-8")
         elif json.get("json", {}).get("password"):
@@ -117,4 +119,4 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return None
 
 
-User()
+User().seed()
