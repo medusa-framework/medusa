@@ -57,3 +57,7 @@ class BaseRoute:
         @ self._blueprint.route('/factory', methods=["POST"])
         def factory():
             return to_json(BaseController(self.model()).factory())
+
+        @ self._blueprint.route('/seed', methods=["POST"])
+        def seed():
+            return to_json(BaseController(self.model()).seed())
