@@ -19,10 +19,9 @@ def create_app():
         app.static_url_path = app.config.get("STATIC_FOLDER")
         app.static_folder = app.root_path + app.static_url_path
         db.init_app(app)
-        migrate.init_app(app)
+        migrate.init_app(app, db)
         bcrypt.init_app(app)
         login_manager.init_app(app)
-        app.extensions["migrate"].db = db
         coloredlogs.install()
         from . import modules
         return app
