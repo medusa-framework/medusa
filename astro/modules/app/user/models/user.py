@@ -43,20 +43,28 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return User.query.get(int(user_id))
 
     def create(self, **kwargs):
-        access_groups = kwargs.get("json").get("user_access_groups")
-        access_group_records = []
-        for access_group in access_groups:
-            access_group_record = AccessGroup().query.filter_by(
-                id=access_group).first()
-            if access_group_record:
-                access_group_records.append(access_group_record)
-        kwargs["json"]["user_access_groups"] = access_group_records
-        kwargs = self.bind_hashed_password(kwargs)
-        return super().create(**kwargs)
+        kwargs["json"]["request_type"] = "create"
+        return self.post(**kwargs)
 
     def update(self, **kwargs):
+        kwargs["json"]["request_type"] = "update"
+        return self.post(**kwargs)
+
+    def post(self, **kwargs):
+        access_groups = kwargs.get("json").get("user_access_groups")
+        if access_groups:
+            access_group_records = []
+            for access_group in access_groups:
+                access_group_record = AccessGroup().query.filter_by(
+                    id=access_group).first()
+                if access_group_record:
+                    access_group_records.append(access_group_record)
+            kwargs["json"]["user_access_groups"] = access_group_records
         kwargs = self.bind_hashed_password(kwargs)
-        return super().update(json=kwargs)
+        if kwargs.get("json").get("request_type") == "update":
+            return super().update(**kwargs)
+        elif kwargs.get("json").get("request_type") == "create":
+            return super().create(**kwargs)
 
     def update_all(self, **kwargs):
         kwargs = self.bind_hashed_password(kwargs)
