@@ -5,8 +5,18 @@ from astro import db, bcrypt, login_manager
 from astro.modules.app.base.models.base import Base
 from astro.modules.app.user.controllers.user import UserController
 from flask_login import UserMixin
+from astro.modules.app.user.models.access_group import AccessGroup
 from astro.modules.app.user.routes.user import UserRoute
 from astro.modules.app.user.seeders.user import users as seeds
+
+
+user_access_groups = db.Table(
+    "user_access_groups",
+    db.Column("access_group_id", db.Integer, db.ForeignKey(
+        "access_group.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey(
+        "user.id"), primary_key=True)
+)
 
 
 class User(Base, UserRoute, db.Model, UserMixin):
@@ -16,6 +26,12 @@ class User(Base, UserRoute, db.Model, UserMixin):
     email = db.Column(db.String(120))
     comments = db.relationship("Comment", backref="user", lazy=True)
     notifications = db.relationship("Notification", backref="user", lazy=True)
+    user_access_groups = db.relationship(
+        "AccessGroup",
+        secondary=user_access_groups,
+        lazy="subquery",
+        backref=db.backref("user", lazy=True)
+    )
 
     def __init__(self) -> None:
         self._controller = UserController(self)
@@ -27,8 +43,16 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return User.query.get(int(user_id))
 
     def create(self, **kwargs):
+        access_groups = kwargs.get("json").get("user_access_groups")
+        access_group_records = []
+        for access_group in access_groups:
+            access_group_record = AccessGroup().query.filter_by(
+                id=access_group).first()
+            if access_group_record:
+                access_group_records.append(access_group_record)
+        kwargs["json"]["user_access_groups"] = access_group_records
         kwargs = self.bind_hashed_password(kwargs)
-        return super().create(json=kwargs)
+        return super().create(**kwargs)
 
     def update(self, **kwargs):
         kwargs = self.bind_hashed_password(kwargs)
@@ -119,4 +143,4 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return None
 
 
-User().seed()
+User()
