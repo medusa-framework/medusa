@@ -15,4 +15,4 @@ class Language(Base, db.Model):
         super().__init__()
 
 
-Language().seed()
+Language()
