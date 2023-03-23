@@ -21,35 +21,35 @@ class BaseRoute:
         )
 
     def routes(self):
-        @self._blueprint.route('/get', methods=["GET"])
+        @self._blueprint.route('/', methods=["GET"])
         def get():
             return to_json(BaseController(self.model()).get())
 
-        @ self._blueprint.route('/get/all', methods=["GET"])
+        @ self._blueprint.route('/all', methods=["GET"])
         def get_all():
             return to_json(BaseController(self.model()).get_all())
 
-        @ self._blueprint.route('/create', methods=["POST"])
+        @ self._blueprint.route('/', methods=["POST"])
         @ login_required
         def create():
             return to_json(BaseController(self.model()).create())
 
-        @ self._blueprint.route('/update', methods=["PATCH"])
+        @ self._blueprint.route('/', methods=["PATCH"])
         @ login_required
         def update():
             return to_json(BaseController(self.model()).update())
 
-        @ self._blueprint.route('/update/all', methods=["PATCH"])
+        @ self._blueprint.route('/all', methods=["PATCH"])
         @ login_required
         def update_all():
             return to_json(BaseController(self.model()).update_all())
 
-        @ self._blueprint.route('/delete', methods=["DELETE"])
+        @ self._blueprint.route('/', methods=["DELETE"])
         @ login_required
         def delete():
             return to_json(BaseController(self.model()).delete())
 
-        @ self._blueprint.route('/delete/all', methods=["DELETE"])
+        @ self._blueprint.route('/all', methods=["DELETE"])
         @ login_required
         def delete_all():
             return to_json(BaseController(self.model()).delete_all())
