@@ -1,4 +1,5 @@
 <!-- template: https://github.com/othneildrew/Best-README-Template/ -->
+<div align="center">
 <a name="readme-top"></a>
 
 [![Contributors][contributors-shield]][contributors-url]
@@ -11,9 +12,8 @@
 
 
 <br />
-<div align="center">
-  <a href="https://github.com/jacobfholland/medusa">
-    <img src="https://wp.inews.co.uk/wp-content/uploads/2022/08/SEI_120609861.jpg?w=1200&h=675&crop=1" alt="Logo">
+  <a href="https://github.com/medusa-framework/medusa">
+    <img src="https://images2.imgbox.com/54/83/rYsEZli9_o.png" width="500px" alt="Logo">
   </a>
 
 # Medusa Framework
@@ -24,11 +24,11 @@ Medusa is a modular Python framework built on top of Flask, designed to help dev
 
 ### Built With 
 
-[![python][python-shield]][python-url][![flask][flask-shield]][flask-url]
+[![python][python-shield]][python-url][![flask][flask-shield]][flask-url][![postgresql][postgresql-shield]][postgresql-url]
 
 
 
-See [open issues](https://github.com/jacobfholland/medusa/issues) for a full list of proposed features/known issues
+See [open issues](https://github.com/medusa-framework/medusa/issues) for a full list of proposed features/known issues
 
 
 ## License
@@ -36,7 +36,7 @@ Distributed under MIT License<br>
 See `LICENSE.txt` for more information
 
 ## Contact
-Project Link: [https://github.com/jacobfholland/medusa](https://github.com/jacobfholland/medusa)
+Project Link: [https://github.com/medusa-framework/medusa](https://github.com/medusa-framework/medusa)
 
 
 <p align="right">(<a href="#readme-top">Back to Top</a>)</p>
@@ -49,18 +49,18 @@ Project Link: [https://github.com/jacobfholland/medusa](https://github.com/jacob
 [python-url]: https://www.python.org/
 [flask-shield]: https://img.shields.io/badge/flask-white?style=for-the-badge&logo=flask&logoColor=black
 [flask-url]: https://flask.palletsprojects.com/en/2.2.x/
-[bootstrap-shield]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[bootstrap-url]: https://getbootstrap.com
-[contributors-shield]: https://img.shields.io/github/contributors/jacobfholland/medusa.svg?style=for-the-badge
-[contributors-url]: https://github.com/jacobfholland/medusa/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/jacobfholland/medusa.svg?style=for-the-badge
-[forks-url]: https://github.com/jacobfholland/medusa/network/members
-[stars-shield]: https://img.shields.io/github/stars/jacobfholland/medusa.svg?style=for-the-badge
-[stars-url]: https://github.com/jacobfholland/medusa/stargazers
-[issues-shield]: https://img.shields.io/github/issues/jacobfholland/medusa.svg?style=for-the-badge
-[issues-url]: https://github.com/jacobfholland/medusa/issues
-[license-shield]: https://img.shields.io/github/license/jacobfholland/medusa.svg?style=for-the-badge
-[license-url]: https://github.com/jacobfholland/medusa/blob/master/LICENSE.txt
+[postgresql-shield]: https://img.shields.io/badge/postgresql-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
+[postgresql-url]: https://www.postgresql.org/
+[contributors-shield]: https://img.shields.io/github/contributors/medusa-framework/medusa.svg?style=for-the-badge
+[contributors-url]: https://github.com/medusa-framework/medusa/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/medusa-framework/medusa.svg?style=for-the-badge
+[forks-url]: https://github.com/medusa-framework/medusa/network/members
+[stars-shield]: https://img.shields.io/github/stars/medusa-framework/medusa.svg?style=for-the-badge
+[stars-url]: https://github.com/medusa-framework/medusa/stargazers
+[issues-shield]: https://img.shields.io/github/issues/medusa-framework/medusa.svg?style=for-the-badge
+[issues-url]: https://github.com/medusa-framework/medusa/issues
+[license-shield]: https://img.shields.io/github/license/medusa-framework/medusa.svg?style=for-the-badge
+[license-url]: https://github.com/medusa-framework/medusa/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: static/images/site_ss.png
