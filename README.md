@@ -1,4 +1,3 @@
-<!-- template: https://github.com/othneildrew/Best-README-Template/ -->
 <div align="center">
 <a name="readme-top"></a>
 
@@ -12,9 +11,34 @@
 
 
 <br />
-  <a href="https://github.com/medusa-framework/medusa">
-    <img src="https://images2.imgbox.com/54/83/rYsEZli9_o.png" width="500px" alt="Logo">
-  </a>
+
+<!-- Light mode image -->
+<img src="https://images2.imgbox.com/21/58/W74sB8hq_o.png" alt="Light mode image" class="mode-image light-mode-image" width="500px">
+
+<!-- Dark mode image -->
+<img src="https://images2.imgbox.com/42/c0/GrT5TQmv_o.png" alt="Dark mode image" class="mode-image dark-mode-image" width="500px">
+<style>
+    /* Default image style */
+    .mode-image {
+        display: none; /* hide the image by default */
+        max-width: 100%; /* set the image width to be 100% of the container */
+    }
+
+    /* Show light mode image when in light mode */
+    @media (prefers-color-scheme: light) {
+        .light-mode-image {
+            display: block; /* show the light mode image */
+        }
+    }
+
+    /* Show dark mode image when in dark mode */
+    @media (prefers-color-scheme: dark) {
+        .dark-mode-image {
+            display: block; /* show the dark mode image */
+        }
+    }
+</style>
+<br>
 
 # Medusa Framework
  
