@@ -10,7 +10,7 @@ class CRUD:
         model = self.__class__()
         model.uuid = str(uuid4())
         model.created_at = datetime.now()
-        model.bind_attributes(kwargs)
+        model.bind_attributes(**kwargs)
         record = self.check_duplicate(model)
         if not record:
             db.session.add(model)
@@ -20,6 +20,12 @@ class CRUD:
             return record
         else:
             return record
+
+    def bind_attributes(self, **kwargs):
+        self.updated_at = datetime.now()
+        for arg in kwargs:
+            if not arg.startswith("_"):
+                setattr(self, arg, kwargs.get(arg))
 
     def get_all(self, order_by=None):
         records = self.query.all()
@@ -89,10 +95,10 @@ class CRUD:
             return record
         return False
 
-    def bind_attributes(self, json):
-        self.updated_at = datetime.now()
-        if "json" in json.keys():
-            return self.bind_attributes(json.get("json"))
-        else:
-            for arg in json:
-                setattr(self, arg, json.get(arg))
+    # def bind_attributes(self, json):
+    #     self.updated_at = datetime.now()
+    #     if "json" in json.keys():
+    #         return self.bind_attributes(json.get("json"))
+    #     else:
+    #         for arg in json:
+    #             setattr(self, arg, json.get(arg))

@@ -20,11 +20,12 @@ class Base(BaseRoute, CRUD):
         return self.__class__()
 
     def create(self, **kwargs):
-        record = super().create(json=kwargs)
-        if record:
-            return self.get(record.id)
-        else:
-            return None
+        return super().create(**kwargs)
+        # record = super().create(**kwargs)
+        # if record:
+        #     return self.get(record.id)
+        # else:
+        #     return None
 
     def get_all(self, order_by=None):
         return super().get_all(order_by=order_by)

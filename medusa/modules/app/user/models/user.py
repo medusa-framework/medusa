@@ -25,13 +25,13 @@ class User(Base, UserRoute, db.Model, UserMixin):
     password = db.Column(db.String())
     email = db.Column(db.String(120))
     comments = db.relationship("Comment", backref="user", lazy=True)
-    notifications = db.relationship("Notification", backref="user", lazy=True)
-    user_access_groups = db.relationship(
-        "AccessGroup",
-        secondary=user_access_groups,
-        lazy="subquery",
-        backref=db.backref("user", lazy=True)
-    )
+    # notifications = db.relationship("Notification", backref="user", lazy=True)
+    # user_access_groups = db.relationship(
+    #     "AccessGroup",
+    #     secondary=user_access_groups,
+    #     lazy="subquery",
+    #     backref=db.backref("user", lazy=True)
+    # )
 
     def __init__(self) -> None:
         self._controller = UserController(self)
@@ -43,28 +43,28 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return User.query.get(int(user_id))
 
     def create(self, **kwargs):
-        kwargs["json"]["request_type"] = "create"
-        return self.post(**kwargs)
+        # kwargs["json"]["request_type"] = "create"
+        return super().create(**kwargs)
 
     def update(self, **kwargs):
         kwargs["json"]["request_type"] = "update"
         return self.post(**kwargs)
 
-    def post(self, **kwargs):
-        access_groups = kwargs.get("json").get("user_access_groups")
-        if access_groups:
-            access_group_records = []
-            for access_group in access_groups:
-                access_group_record = AccessGroup().query.filter_by(
-                    id=access_group).first()
-                if access_group_record:
-                    access_group_records.append(access_group_record)
-            kwargs["json"]["user_access_groups"] = access_group_records
-        kwargs = self.bind_hashed_password(kwargs)
-        if kwargs.get("json").get("request_type") == "update":
-            return super().update(**kwargs)
-        elif kwargs.get("json").get("request_type") == "create":
-            return super().create(**kwargs)
+    # def post(self, **kwargs):
+    #     access_groups = kwargs.get("json").get("user_access_groups")
+    #     if access_groups:
+    #         access_group_records = []
+    #         for access_group in access_groups:
+    #             access_group_record = AccessGroup().query.filter_by(
+    #                 id=access_group).first()
+    #             if access_group_record:
+    #                 access_group_records.append(access_group_record)
+    #         kwargs["json"]["user_access_groups"] = access_group_records
+    #     kwargs = self.bind_hashed_password(kwargs)
+    #     if kwargs.get("json").get("request_type") == "update":
+    #         return super().update(**kwargs)
+    #     elif kwargs.get("json").get("request_type") == "create":
+    #         return super().create(**kwargs)
 
     def update_all(self, **kwargs):
         kwargs = self.bind_hashed_password(kwargs)

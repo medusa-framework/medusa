@@ -30,7 +30,7 @@ class BaseRoute:
             return to_json(BaseController(self.model()).get_all())
 
         @ self._blueprint.route('/', methods=["POST"])
-        @ login_required
+        # @ login_required
         def create():
             return to_json(BaseController(self.model()).create())
 

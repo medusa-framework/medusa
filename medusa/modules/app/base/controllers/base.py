@@ -8,9 +8,10 @@ class BaseController():
 
     def create(self):
         json = request.json
-        if not json.get("user_id") and current_user.is_authenticated:
-            json["user_id"] = current_user.id
-        return self.model.create(json=json)
+        json["user_id"] = 1
+        # if not json.get("user_id") and current_user.is_authenticated:
+        #     json["user_id"] = current_user.id
+        return self.model.create(**json)
 
     def get_all(self):
         return self.model.get_all()
