@@ -6,8 +6,8 @@ from flask_login import current_user
 
 
 class Message(Base):
-    # message = db.Column(db.String())
-    # user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    message = db.Column(db.String())
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __init__(self) -> None:
         self._controller = BaseController(self)

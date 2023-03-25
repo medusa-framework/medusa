@@ -30,26 +30,25 @@ class AccessGroup(Base, db.Model):
         super().__init__()
 
     def create(self, **kwargs):
-        kwargs["json"]["request_type"] = "create"
         return self.post(**kwargs)
 
     def update(self, **kwargs):
-        kwargs["json"]["request_type"] = "update"
         return self.post(**kwargs)
 
     def post(self, **kwargs):
-        access_group_rights = kwargs.get("json").get("access_group_rights")
-        if access_group_rights:
+        print(kwargs)
+        access_rights = kwargs.get("access_group_rights")
+        if access_rights:
             access_right_records = []
-            for access_right in access_group_rights:
+            for access_right in access_rights:
                 access_right_record = AccessRight().query.filter_by(
                     id=access_right).first()
                 if access_right_record:
                     access_right_records.append(access_right_record)
-            kwargs["json"]["access_group_rights"] = access_right_records
-        if kwargs.get("json").get("request_type") == "update":
+            kwargs["access_group_rights"] = access_right_records
+        if kwargs.get("request_type") == "PATCH":
             return super().update(**kwargs)
-        elif kwargs.get("json").get("request_type") == "create":
+        elif kwargs.get("request_type") == "POST":
             return super().create(**kwargs)
 
     def factory(self):

@@ -21,11 +21,6 @@ class Base(BaseRoute, CRUD):
 
     def create(self, **kwargs):
         return super().create(**kwargs)
-        # record = super().create(**kwargs)
-        # if record:
-        #     return self.get(record.id)
-        # else:
-        #     return None
 
     def get_all(self, order_by=None):
         return super().get_all(order_by=order_by)
@@ -34,10 +29,10 @@ class Base(BaseRoute, CRUD):
         return super().get(id=id)
 
     def update(self, **kwargs):
-        return super().update(json=kwargs)
+        return super().update(**kwargs)
 
     def update_all(self, **kwargs):
-        return super().update_all(json=kwargs)
+        return super().update_all(**kwargs)
 
     def delete(self, id=None):
         return super().delete(id=id)
@@ -48,7 +43,7 @@ class Base(BaseRoute, CRUD):
     def seed(self):
         if not self.get_all():
             for seed in self._seeds:
-                self.create(json=seed)
+                self.create(**seed)
 
     def factory(self):
         return None
@@ -57,7 +52,7 @@ class Base(BaseRoute, CRUD):
         if self.factory():
             for i in range(int(count)):
                 json = self.factory()
-                self.create(json=json)
+                self.create(**json)
             return self.get_all()
         else:
             return None

@@ -25,6 +25,10 @@ htmlcov/
 nosetests.xml
 coverage.xml
 
+# Ignore all database directories and files
+database/
+*.db
+
 # Temporary files
 *.bak
 *.swp

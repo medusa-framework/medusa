@@ -33,7 +33,7 @@ class CRUD:
             records = self.query.order_by(order_by).filter_by().all()
         else:
             records = self.query.filter_by().all()
-        if not records == []:
+        if records:
             return records
         else:
             return None
@@ -45,12 +45,10 @@ class CRUD:
             return None
 
     def update(self, **kwargs):
-        id = kwargs_get(kwargs, "id")
-        id = validate_int(id)
+        id = validate_int(kwargs.get("id"))
         record = self.query.filter_by(id=id).first()
-        if not record == None:
-            record.updated_at = datetime.now()
-            record.bind_attributes(kwargs)
+        if record:
+            record.bind_attributes(**kwargs)
             db.session.commit()
             return self.query.order_by(self.__class__.updated_at.desc()).first()
         else:
@@ -58,11 +56,11 @@ class CRUD:
 
     def update_all(self, **kwargs):
         records = self.get_all()
-        if records == []:
+        if not records:
             return None
         for record in records:
             kwargs["id"] = record.id
-            record.update(json=kwargs)
+            record.update(**kwargs)
         return self.get_all(order_by="updated_at")
 
     def delete(self, id):
@@ -94,11 +92,3 @@ class CRUD:
         if record:
             return record
         return False
-
-    # def bind_attributes(self, json):
-    #     self.updated_at = datetime.now()
-    #     if "json" in json.keys():
-    #         return self.bind_attributes(json.get("json"))
-    #     else:
-    #         for arg in json:
-    #             setattr(self, arg, json.get(arg))

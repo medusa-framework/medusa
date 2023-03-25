@@ -10,8 +10,3 @@ class BindClass(Base, db.Model):
         object.updated_at = datetime.now()
         for arg in kwargs:
             setattr(self, arg, kwargs.get(arg))
-
-# object = Tom()
-# object.bind_attributes(name="testname", poop=True,
-#                        grabblin=False, kimya="dawason", birthday="april 18")
-# print(object)
