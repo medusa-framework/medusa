@@ -15,27 +15,27 @@ class UserRoute(BaseRoute):
             return to_json(self._controller.login())
 
         @self._blueprint.route('/logout', methods=["POST"])
-        @login_required
+        # @login_required
         def logout():
             return to_json(self._controller.logout())
 
         @self._blueprint.route('/current', methods=["GET"])
-        @login_required
+        # @login_required
         def current():
             return to_json(self._controller.current())
 
         @self._blueprint.route('/comments', methods=["GET"])
-        @login_required
+        # @login_required
         def comments():
             return to_json(self._controller.comments())
 
         @self._blueprint.route('/notifications', methods=["GET"])
-        @login_required
+        # @login_required
         def notifications():
             return to_json(self._controller.notifications())
 
         @self._blueprint.route('/delete_user_comments', methods=["DELETE"])
-        @login_required
+        # @login_required
         def delete_user_comments():
             return to_json(self._controller.delete_user_comments())
 

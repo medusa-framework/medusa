@@ -10,7 +10,8 @@ class BaseController():
         json = request.json
         if not json.get("user_id") and current_user.is_authenticated:
             json["user_id"] = current_user.id
-        return self.model.create(json=json)
+        json["request_type"] = request.method
+        return self.model.create(**json)
 
     def get_all(self):
         return self.model.get_all()
@@ -28,13 +29,13 @@ class BaseController():
 
     def update_all(self):
         json = request.json
-        return self.model.update_all(json=json)
+        return self.model.update_all(**json)
 
     def update(self):
         json = request.json
-        id = request.args.get("id")
-        json["id"] = id
-        return self.model.update(json=json)
+        json["id"] = request.args.get("id")
+        json["request_type"] = request.method
+        return self.model.update(**json)
 
     def factory(self):
         count = request.args.get("count")

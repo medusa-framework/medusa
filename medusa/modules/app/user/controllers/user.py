@@ -4,7 +4,8 @@ from medusa.modules.app.base.controllers.base import BaseController
 
 class UserController(BaseController):
     def login(self):
-        return self.model.login()
+        json = request.json
+        return self.model.login(**json)
 
     def current(self):
         return self.model.current()

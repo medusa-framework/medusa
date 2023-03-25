@@ -10,7 +10,7 @@ class CRUD:
         model = self.__class__()
         model.uuid = str(uuid4())
         model.created_at = datetime.now()
-        model.bind_attributes(kwargs)
+        model.bind_attributes(**kwargs)
         record = self.check_duplicate(model)
         if not record:
             db.session.add(model)
@@ -21,13 +21,19 @@ class CRUD:
         else:
             return record
 
+    def bind_attributes(self, **kwargs):
+        self.updated_at = datetime.now()
+        for arg in kwargs:
+            if not arg.startswith("_"):
+                setattr(self, arg, kwargs.get(arg))
+
     def get_all(self, order_by=None):
         records = self.query.all()
         if order_by:
             records = self.query.order_by(order_by).filter_by().all()
         else:
             records = self.query.filter_by().all()
-        if not records == []:
+        if records:
             return records
         else:
             return None
@@ -39,12 +45,10 @@ class CRUD:
             return None
 
     def update(self, **kwargs):
-        id = kwargs_get(kwargs, "id")
-        id = validate_int(id)
+        id = validate_int(kwargs.get("id"))
         record = self.query.filter_by(id=id).first()
-        if not record == None:
-            record.updated_at = datetime.now()
-            record.bind_attributes(kwargs)
+        if record:
+            record.bind_attributes(**kwargs)
             db.session.commit()
             return self.query.order_by(self.__class__.updated_at.desc()).first()
         else:
@@ -52,11 +56,11 @@ class CRUD:
 
     def update_all(self, **kwargs):
         records = self.get_all()
-        if records == []:
+        if not records:
             return None
         for record in records:
             kwargs["id"] = record.id
-            record.update(json=kwargs)
+            record.update(**kwargs)
         return self.get_all(order_by="updated_at")
 
     def delete(self, id):
@@ -88,11 +92,3 @@ class CRUD:
         if record:
             return record
         return False
-
-    def bind_attributes(self, json):
-        self.updated_at = datetime.now()
-        if "json" in json.keys():
-            return self.bind_attributes(json.get("json"))
-        else:
-            for arg in json:
-                setattr(self, arg, json.get(arg))
