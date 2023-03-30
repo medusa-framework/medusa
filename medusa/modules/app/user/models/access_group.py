@@ -16,6 +16,14 @@ access_group_rights = db.Table(
 
 
 class AccessGroup(Base, db.Model):
+    """
+    A model class for AccessGroup and its methods.
+
+    Attributes:
+        name (db.Column): A string column to store the name of the access group.
+        access_group_rights (db.relationship): A many-to-many relationship to AccessRight model.
+    """
+
     name = db.Column(db.String())
     access_group_rights = db.relationship(
         "AccessRight",
@@ -25,17 +33,47 @@ class AccessGroup(Base, db.Model):
     )
 
     def __init__(self) -> None:
+        """
+        Initializes a new instance of AccessGroup and its controller and seeds attributes.
+        """
         self._controller = BaseController(self)
         self._seeds = seeds
         super().__init__()
 
     def create(self, **kwargs):
+        """
+        Create a new AccessGroup instance and add it to the database.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments. It can include name and access_group_rights.
+
+        Returns:
+            AccessGroup: A new instance of AccessGroup.
+        """
         return self.post(**kwargs)
 
     def update(self, **kwargs):
+        """
+        Update an existing AccessGroup instance and update its values in the database.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments. It can include name and access_group_rights.
+
+        Returns:
+            AccessGroup: The updated instance of AccessGroup.
+        """
         return self.post(**kwargs)
 
     def post(self, **kwargs):
+        """
+        Handle the POST and PATCH requests of the AccessGroup model.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments. It can include name, access_group_rights, and request_type.
+
+        Returns:
+            AccessGroup: The created or updated instance of AccessGroup.
+        """
         print(kwargs)
         access_rights = kwargs.get("access_group_rights")
         if access_rights:
@@ -52,6 +90,12 @@ class AccessGroup(Base, db.Model):
             return super().create(**kwargs)
 
     def factory(self):
+        """
+        Create a new AccessGroup instance with a randomly generated name.
+
+        Returns:
+            dict: A new instance of AccessGroup with a random name.
+        """
         faker = Faker()
         name = faker.word()
         json = {"name": name}

@@ -20,7 +20,17 @@ user_access_groups = db.Table(
 
 
 class User(Base, UserRoute, db.Model, UserMixin):
+    """
+    Class representing a user.
 
+    Attributes:
+        username (str): Username of the user.
+        password (str): Password of the user.
+        email (str): Email of the user.
+        comments (Relationship): Relationship to Comment model.
+        notifications (Relationship): Relationship to Notification model.
+        user_access_groups (Relationship): Relationship to AccessGroup model.
+    """
     username = db.Column(db.String(128))
     password = db.Column(db.String())
     email = db.Column(db.String(120))
@@ -34,23 +44,64 @@ class User(Base, UserRoute, db.Model, UserMixin):
     )
 
     def __init__(self) -> None:
+        """
+        Initializes a new instance of User.
+
+        This constructor initializes a UserController instance and a seeds object.
+        """
         self._controller = UserController(self)
         self._seeds = seeds
         super().__init__()
 
     @login_manager.user_loader
     def load_user(user_id):
+        """
+        Loads a user by ID.
+
+        Args:
+            user_id (int): ID of the user to load.
+
+        Returns:
+            User: The loaded user.
+        """
         return User.query.get(int(user_id))
 
     def create(self, **kwargs):
+        """
+        Creates a new user.
+
+        Args:
+            **kwargs: Keyword arguments containing user information.
+
+        Returns:
+            dict: A dictionary containing user information.
+        """
         kwargs["password"] = self.hashed_password(**kwargs)
         return self.post(**kwargs)
 
     def update(self, **kwargs):
+        """
+        Updates an existing user.
+
+        Args:
+            **kwargs: Keyword arguments containing user information.
+
+        Returns:
+            dict: A dictionary containing user information.
+        """
         kwargs["password"] = self.hashed_password(**kwargs)
         return self.post(**kwargs)
 
     def post(self, **kwargs):
+        """
+        Posts user information to the database.
+
+        Args:
+            **kwargs: Keyword arguments containing user information.
+
+        Returns:
+            dict: A dictionary containing user information.
+        """
         access_groups = kwargs.get("user_access_groups")
         if access_groups:
             access_group_records = []
@@ -67,37 +118,68 @@ class User(Base, UserRoute, db.Model, UserMixin):
             return super().create(**kwargs)
 
     def update_all(self, **kwargs):
+        """
+        Updates all users.
+
+        Args:
+            **kwargs: Keyword arguments containing user information.
+
+        Returns:
+            dict: A dictionary containing user information.
+        """
         kwargs = self.bind_hashed_password(kwargs)
         return super().update_all(json=kwargs)
 
     def register(self, **kwargs):
-        # don't need hashed password as kwarg
+        """
+        Registers a new user.
+
+        Args:
+            **kwargs: Keyword arguments containing user information.
+
+        Returns:
+            User: The registered user.
+        """
         hashed_password = self.hashed_password(**kwargs)
         user = self.create(password=hashed_password, json=kwargs)
         login_user(user, remember=request.json.get("remember"))
         return current_user
 
     def login(self, **kwargs):
+        """
+        Logs in a user.
+
+        Args:
+            **kwargs: Keyword arguments containing user information.
+
+        Returns:
+            User: The logged-in user.
+        """
         if kwargs.get("email") and kwargs.get("password"):
             existing_user = self.query.filter_by(
-                email=kwargs.get("email")
-            ).first()
-            # compare against saved valid login
-            # if existing_user and bcrypt.check_password_hash(existing_user.password, kwargs.get("password")):
-            # apply logged in status for successful check
-            login_user(existing_user,
-                       remember=kwargs.get("remember"))
+                email=kwargs.get("email")).first()
+            login_user(existing_user, remember=kwargs.get("remember"))
             return current_user
-            # else:
-            #     return None
 
     def current(self):
+        """
+        Gets the current user.
+
+        Returns:
+            User: The current user.
+        """
         if not current_user == {}:
             return current_user
         else:
             return None
 
     def logout(self):
+        """
+        Logs out the current user.
+
+        Returns:
+            User: The user that was logged out.
+        """
         if current_user:
             temp_user = self.query.filter_by(id=current_user.id).first()
             logout_user()
@@ -106,6 +188,15 @@ class User(Base, UserRoute, db.Model, UserMixin):
             return None
 
     def hashed_password(self, **kwargs):
+        """
+        Hashes a password.
+
+        Args:
+            **kwargs: Keyword arguments containing user information.
+
+        Returns:
+            str: The hashed password.
+        """
         if kwargs.get("password"):
             hashed_password = bcrypt.generate_password_hash(
                 kwargs.get("password")).decode("utf-8")
@@ -115,6 +206,15 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return hashed_password
 
     def bind_hashed_password(self, kwargs):
+        """
+        Binds a hashed password to a keyword argument dictionary.
+
+        Args:
+            kwargs: Keyword arguments containing user information.
+
+        Returns:
+            dict: A dictionary containing user information.
+        """
         hashed_password = self.hashed_password(json=kwargs)
         if kwargs.get("json"):
             kwargs["json"]["password"] = hashed_password
@@ -123,6 +223,12 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return kwargs
 
     def factory(self):
+        """
+        Creates a new User instance.
+
+        Returns:
+            dict: A dictionary containing user information.
+        """
         faker = Faker()
         username = faker.name().replace(" ", "")
         email = faker.email()
@@ -134,6 +240,15 @@ class User(Base, UserRoute, db.Model, UserMixin):
         return json
 
     def delete_user_comments(self, comments):
+        """
+        Deletes a user's comments.
+
+        Args:
+            comments: The comments to delete.
+
+        Returns:
+            None
+        """
         if comments == None:
             return None
         for comment in comments:
