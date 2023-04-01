@@ -65,7 +65,7 @@ class CRUD:
         else:
             return None
 
-    def get(self, kwargs):
+    def get(self, **kwargs):
         """
         Retrieve records from the database that match the specified filter criteria.
 

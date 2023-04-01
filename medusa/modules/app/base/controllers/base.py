@@ -42,7 +42,7 @@ class BaseController():
             The retrieved record.
         """
         query_params = request.args.to_dict()
-        return self.model.get(query_params)
+        return self.model.get(**query_params)
 
     def delete_all(self) -> None:
         """Delete all records from the database."""
