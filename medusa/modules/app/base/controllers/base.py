@@ -36,13 +36,13 @@ class BaseController():
         return self.model.get_all()
 
     def get(self) -> object:
-        """Retrieve a record from the database by ID.
+        """Retrieve a record from the database.
 
         Returns:
             The retrieved record.
         """
-        id = request.args.get("id")
-        return self.model.get(id)
+        query_params = request.args.to_dict()
+        return self.model.get(**query_params)
 
     def delete_all(self) -> None:
         """Delete all records from the database."""
