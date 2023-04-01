@@ -54,7 +54,7 @@ class Base(BaseRoute, CRUD):
         """
         return super().get_all(order_by=order_by)
 
-    def get(self, id=None):
+    def get(self, kwargs):
         """Retrieve a record from the database by ID.
 
         Args:
@@ -63,7 +63,7 @@ class Base(BaseRoute, CRUD):
         Returns:
             The retrieved record.
         """
-        return super().get(id=id)
+        return super().get(kwargs)
 
     def update(self, **kwargs):
         """Update a record in the database.

@@ -65,20 +65,21 @@ class CRUD:
         else:
             return None
 
-    def get(self, id):
+    def get(self, kwargs):
         """
-        Retrieves a record from the database by ID.
+        Retrieve records from the database that match the specified filter criteria.
 
         Args:
-            id: The ID of the record to retrieve.
+            **kwargs: Filter criteria to apply to the query. Each keyword argument corresponds
+            to a column in the database table.
 
         Returns:
-            The retrieved record.
+            A list of records that match the specified filter criteria.
         """
-        if validate_int(id):
-            return self.query.filter_by(id=id).first()
-        else:
+        records = self.query.filter_by(**kwargs).all()
+        if not records:
             return None
+        return records
 
     def update(self, **kwargs):
         """
