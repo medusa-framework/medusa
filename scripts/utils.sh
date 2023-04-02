@@ -51,7 +51,17 @@ run_app() {
     # Install PostgreSQL and Python packages
     $PROJECT_DIR/scripts/postgresql.sh
     $PROJECT_DIR/scripts/pip.sh
+
+    # Upgrade database
+    if [ -d "$PROJECT_DIR/migrations" ]; then
+        echo "The migrations directory exists in $PROJECT_DIR"
+    else
+        echo "The migrations directory does not exist in $PROJECT_DIR"
+        flask db init
+    fi
     
+    flask db migrate
+    flask db upgrade
 
     # Run the Flask app using either Gunicorn or the Flask development server
     if [ "$APP_ENV" = "production" ]; then
