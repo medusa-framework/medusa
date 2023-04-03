@@ -19,7 +19,8 @@ class Config(DatabaseConfig):
     DATABASE_NAME = os.environ.get("DATABASE_NAME", "medusa")
     FLASK_APP = os.environ.get("FLASK_APP", "run.py")
     SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_bytes(32))
-    DEBUG = False
+    DEBUG = True
+    LOG_PATH = "logs/mds.log"
 
 
 class DevelopmentConfig(Config):

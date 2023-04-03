@@ -1,13 +1,19 @@
 from datetime import datetime
+import logging
 from uuid import uuid4
 from medusa import db
+from medusa.log.log import CustomLogger
 from medusa.modules.app.utils.functions.utils import validate_int, kwargs_get
 
 
 class CRUD:
+    logger = CustomLogger()
     """
     Base class for database models with basic CRUD (Create, Read, Update, Delete) operations.
     """
+
+    def __init__(self) -> None:
+        super().__init__()
 
     def create(self, **kwargs):
         """
@@ -29,8 +35,10 @@ class CRUD:
             db.session.commit()
             record = model.query.order_by(
                 model.__class__.created_at.desc()).first()
+            self.logger.info(f"Record created: {record}", "SUCCESS")
             return record
         else:
+            self.logger.warning(f"Record already exists: {record}", "FAILURE")
             return record
 
     def bind_attributes(self, **kwargs):
@@ -45,6 +53,7 @@ class CRUD:
             if not arg.startswith("_"):
                 setattr(self, arg, kwargs.get(arg))
 
+    # no logging here, deprecated
     def get_all(self, order_by=None):
         """
         Retrieves all records from the database.
@@ -78,8 +87,13 @@ class CRUD:
         """
         records = self.query.filter_by(**kwargs).all()
         if not records:
+            self.logger.warning(
+                f"No matching records found for {kwargs}", "FAILURE")
             return None
-        return records
+        else:
+            self.logger.info(
+                f"{len(records)} matching records found for {kwargs}", "SUCCESS")
+            return records
 
     def update(self, **kwargs):
         """
@@ -96,8 +110,11 @@ class CRUD:
         if record:
             record.bind_attributes(**kwargs)
             db.session.commit()
+            self.logger.info(f"Record updated: {record}", "SUCCESS")
             return self.query.order_by(self.__class__.updated_at.desc()).first()
         else:
+            self.logger.warning(
+                f"No matching record found for id {id}", "FAILURE")
             return None
 
     def update_all(self, **kwargs):
@@ -112,10 +129,14 @@ class CRUD:
         """
         records = self.get_all()
         if not records:
+            self.logger.warning(
+                f"No matching records found for {kwargs}", "FAILURE")
             return None
         for record in records:
             kwargs["id"] = record.id
             record.update(**kwargs)
+        self.logger.info(
+            f"{len(records)} matching records updated for {kwargs}", "SUCCESS")
         return self.get_all(order_by="updated_at")
 
     def delete(self, id):
@@ -135,8 +156,11 @@ class CRUD:
             temp_record = record
             db.session.delete(record)
             db.session.commit()
+            self.logger.info(f"Record deleted: {temp_record.id}", "SUCCESS")
             return temp_record
         else:
+            self.logger.warning(
+                f"No matching record found for id {id}", "FAILURE")
             return None
 
     def delete_all(self):

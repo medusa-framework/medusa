@@ -43,6 +43,10 @@ def create_app(env="development"):
         # Install colored logging.
         coloredlogs.install()
 
+        # check for logs folder and create if not found
+        if not os.path.exists("logs"):
+            os.makedirs("logs")
+
         # Import application modules.
         from . import modules
 
