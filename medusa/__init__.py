@@ -44,8 +44,8 @@ def create_app(env="development"):
         coloredlogs.install()
 
         # check for logs folder and create if not found
-        if not os.path.exists(Config.LOG_PATH):
-            os.makedirs(Config.LOG_PATH)
+        # if not os.path.exists(Config.LOG_PATH):
+        #     os.makedirs(Config.LOG_PATH)
 
         # Import application modules.
         from . import modules
