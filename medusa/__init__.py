@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import coloredlogs
 from flask_bcrypt import Bcrypt
-from medusa.config.app import config
+from medusa.config.app import Config, config
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -44,8 +44,8 @@ def create_app(env="development"):
         coloredlogs.install()
 
         # check for logs folder and create if not found
-        if not os.path.exists("logs"):
-            os.makedirs("logs")
+        if not os.path.exists(Config.LOG_PATH):
+            os.makedirs(Config.LOG_PATH)
 
         # Import application modules.
         from . import modules

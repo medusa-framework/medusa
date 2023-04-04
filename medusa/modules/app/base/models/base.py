@@ -1,4 +1,5 @@
 from medusa import db
+from medusa.modules.app.utils.models.log import CustomLogger
 from medusa.modules.app.base.models.crud import CRUD
 from medusa.modules.app.base.routes.base import BaseRoute
 

@@ -19,8 +19,12 @@ class Config(DatabaseConfig):
     DATABASE_NAME = os.environ.get("DATABASE_NAME", "medusa")
     FLASK_APP = os.environ.get("FLASK_APP", "run.py")
     SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_bytes(32))
-    DEBUG = True
-    LOG_PATH = "logs/mds.log"
+    DEBUG = False
+    # TODO: if last 4 of log name is not '.log', append .log
+    LOG_NAME = os.environ.get(
+        "LOG_NAME", APP_NAME.lower().replace(" ", "_"))
+    LOG_PATH = os.environ.get("LOG_PATH", "/logs")
+    LOG_FILE = os.environ.get("LOG_FILE", f"{LOG_PATH}/{LOG_NAME}.log")
 
 
 class DevelopmentConfig(Config):
