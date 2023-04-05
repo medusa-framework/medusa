@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import coloredlogs
 from flask_bcrypt import Bcrypt
-from medusa.config.app import config
+from medusa.config.app import Config, config
 
 db = SQLAlchemy()
 migrate = Migrate()

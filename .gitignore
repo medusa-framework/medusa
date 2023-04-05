@@ -36,3 +36,4 @@ database/
 
 # Directories to ignore
 **/migrations/
+**/logs/

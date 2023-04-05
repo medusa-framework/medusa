@@ -9,7 +9,6 @@ from medusa.modules.app.user.models.access_group import AccessGroup
 from medusa.modules.app.user.routes.user import UserRoute
 from medusa.modules.app.user.seeders.user import users as seeds
 
-
 user_access_groups = db.Table(
     "user_access_groups",
     db.Column("access_group_id", db.Integer, db.ForeignKey(
