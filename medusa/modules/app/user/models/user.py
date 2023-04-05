@@ -8,7 +8,6 @@ from flask_login import UserMixin
 from medusa.modules.app.user.models.access_group import AccessGroup
 from medusa.modules.app.user.routes.user import UserRoute
 from medusa.modules.app.user.seeders.user import users as seeds
-from medusa.modules.app.utils.models.log import CustomLogger
 
 user_access_groups = db.Table(
     "user_access_groups",

@@ -1,18 +1,29 @@
 from datetime import datetime
-import logging
 from uuid import uuid4
 from medusa import db
-from medusa.modules.app.utils.models.log import CustomLogger
-from medusa.modules.app.utils.functions.utils import validate_int, kwargs_get
+from medusa.modules.app.utils.functions.utils import validate_int
+import logging
 
 
-class CRUD(CustomLogger):
+class CRUD():
     """
     Base class for database models with basic CRUD (Create, Read, Update, Delete) operations.
+    Creates loggers for werkzeug and medusa to split log files.
     """
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    def __init__(self) -> None:
-        super().__init__()
+    werkzeug_logger = logging.getLogger('werkzeug')
+    werkzeug_handler = logging.FileHandler("logs/werkzeug.log")
+    werkzeug_handler.setLevel(logging.DEBUG)
+    werkzeug_handler.setFormatter(formatter)
+    werkzeug_logger.addHandler(werkzeug_handler)
+
+    mds_logger = logging.getLogger('medusa')
+    mds_handler = logging.FileHandler("logs/medusa.log")
+    mds_handler.setLevel(logging.DEBUG)
+    mds_handler.setFormatter(formatter)
+    mds_logger.addHandler(mds_handler)
 
     def create(self, **kwargs):
         """
@@ -34,10 +45,12 @@ class CRUD(CustomLogger):
             db.session.commit()
             record = model.query.order_by(
                 model.__class__.created_at.desc()).first()
-            self.log_info(f"Record created: {record.id}", "SUCCESS")
+            logging.info("[%s] [%s] Record %s created.",
+                         self.__class__.__name__.upper(), "POST", record.id)
             return record
         else:
-            self.log_warning(f"Record already exists: {record.id}", "FAILURE")
+            logging.warning("[%s] [%s] Record %s already exists.",
+                            self.__class__.__name__.upper(), "POST", record.id)
             return record
 
     def bind_attributes(self, **kwargs):
@@ -52,7 +65,6 @@ class CRUD(CustomLogger):
             if not arg.startswith("_"):
                 setattr(self, arg, kwargs.get(arg))
 
-    # no logging here, deprecated
     def get_all(self, order_by=None):
         """
         Retrieves all records from the database.
@@ -86,12 +98,12 @@ class CRUD(CustomLogger):
         """
         records = self.query.filter_by(**kwargs).all()
         if not records:
-            self.log_warning(
-                f"No matching records found.", "FAILURE")
+            logging.warning("[%s] [%s] No matching records found.",
+                            self.__class__.__name__.upper(), "GET")
             return None
         else:
-            self.log_info(
-                f"{len(records)} matching records found.", "SUCCESS")
+            logging.info("[%s] [%s] %s matching records found.",
+                         self.__class__.__name__.upper(), "GET", len(records))
             return records
 
     def update(self, **kwargs):
@@ -109,11 +121,12 @@ class CRUD(CustomLogger):
         if record:
             record.bind_attributes(**kwargs)
             db.session.commit()
-            self.log_info(f"Record updated: {record}", "SUCCESS")
+            logging.info("[%s] [%s] Record %s updated.",
+                         self.__class__.__name__.upper(), "PATCH", id)
             return self.query.order_by(self.__class__.updated_at.desc()).first()
         else:
-            self.log_warning(
-                f"No matching record found.", "FAILURE")
+            logging.warning("[%s] [%s] No matching records found.",
+                            self.__class__.__name__.upper(), "PATCH")
             return None
 
     def update_all(self, **kwargs):
@@ -128,14 +141,14 @@ class CRUD(CustomLogger):
         """
         records = self.get_all()
         if not records:
-            self.log_warning(
-                f"No matching records found.", "FAILURE")
+            logging.warning("[%s] [%s] No matching records found.",
+                            self.__class__.__name__.upper(), "PATCH")
             return None
         for record in records:
             kwargs["id"] = record.id
             record.update(**kwargs)
-        self.log_info(
-            f"{len(records)} matching records updated.", "SUCCESS")
+            logging.info("[%s] [%s] %s matching records updated.",
+                         self.__class__.__name__.upper(), "PATCH", len(records))
         return self.get_all(order_by="updated_at")
 
     def delete(self, id):
@@ -155,11 +168,12 @@ class CRUD(CustomLogger):
             temp_record = record
             db.session.delete(record)
             db.session.commit()
-            self.log_info(f"Record deleted: {temp_record.id}", "SUCCESS")
+            logging.info("[%s] [%s] Record %s deleted.",
+                         self.__class__.__name__.upper(), "DELETE", id)
             return temp_record
         else:
-            self.log_warning(
-                f"No matching record found.", "FAILURE")
+            logging.warning("[%s] [%s] No matching records found.",
+                            self.__class__.__name__.upper(), "DELETE")
             return None
 
     def delete_all(self):
@@ -173,6 +187,8 @@ class CRUD(CustomLogger):
             return None
         for record in records:
             record.delete(record.id)
+        logging.info("[%s] [%s] %s matching records deleted.",
+                     self.__class__.__name__.upper(), "DELETE", len(records))
         return None
 
     def check_duplicate(self, model):
@@ -193,6 +209,3 @@ class CRUD(CustomLogger):
         if record:
             return record
         return False
-
-
-CRUD()
