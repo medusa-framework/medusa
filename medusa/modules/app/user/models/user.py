@@ -31,7 +31,7 @@ class User(Base, UserRoute, db.Model, UserMixin):
         user_access_groups (Relationship): Relationship to AccessGroup model.
     """
     username = db.Column(db.String(128))
-    password = db.Column(db.String())
+    password = db.Column(db.String(255))
     email = db.Column(db.String(120))
     comments = db.relationship("Comment", backref="user", lazy=True)
     notifications = db.relationship("Notification", backref="user", lazy=True)

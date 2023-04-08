@@ -24,7 +24,7 @@ class AccessGroup(Base, db.Model):
         access_group_rights (db.relationship): A many-to-many relationship to AccessRight model.
     """
 
-    name = db.Column(db.String())
+    name = db.Column(db.String(50))
     access_group_rights = db.relationship(
         "AccessRight",
         secondary=access_group_rights,

@@ -8,7 +8,7 @@ class Base(BaseRoute, CRUD):
     Base class for database models with basic CRUD operations.
     """
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String())
+    uuid = db.Column(db.String(36))
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 

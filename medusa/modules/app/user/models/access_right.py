@@ -11,7 +11,7 @@ class AccessRight(Base, db.Model):
     Attributes:
         name (str): Name of the access right.
     """
-    name = db.Column(db.String())
+    name = db.Column(db.String(50))
 
     def __init__(self) -> None:
         """Initializes a new instance of AccessRight.

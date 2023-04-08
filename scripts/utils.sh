@@ -49,8 +49,9 @@ run_app() {
     fi
 
     # Install PostgreSQL and Python packages
-    $PROJECT_DIR/scripts/postgresql.sh
     $PROJECT_DIR/scripts/pip.sh
+    $PROJECT_DIR/scripts/postgresql.sh
+    $PROJECT_DIR/scripts/mysql.sh
 
     # Upgrade database
     if [ -d "$PROJECT_DIR/migrations" ]; then
