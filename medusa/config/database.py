@@ -1,55 +1,31 @@
 import os
 
 
-def db_ext_check(SQLALCHEMY_DATABASE_URI: str) -> str:
-    """
-    Modify the SQLAlchemy database URI if the database type is SQLite. Replace any spaces in the database name with
-    underscores.
-
-    Args:
-        SQLALCHEMY_DATABASE_URI (str): The original SQLAlchemy database URI.
-
-    Returns:
-        str: The modified SQLAlchemy database URI.
-    """
-    # Check if the database type is SQLite
-    if DatabaseConfig.DATABASE_TYPE == "sqlite":
-        # Define the directory where the database file will be stored
-        database_dir = os.path.join(os.getcwd(), "medusa", "database")
-        # Create the database directory if it does not already exist
-        if not os.path.exists(database_dir):
-            os.makedirs(database_dir)
-        # Replace spaces with underscores in the database name
-        database_name = SQLALCHEMY_DATABASE_URI.split("/")[-1]
-        # Modify the database URI to include the database directory and name
-        SQLALCHEMY_DATABASE_URI = (
-            f"sqlite:///{os.path.join(database_dir, database_name)}.db"
-        )
-    # Return the modified database URI
-    return SQLALCHEMY_DATABASE_URI
-
-
 def build_sqlalchemy_uri(database_name: str) -> str:
     """
-    Build the SQLAlchemy database URI based on the database type and user credentials.
-
+    Builds the SQLAlchemy URI for the specified database.
     Args:
         database_name (str): The name of the database.
-
     Returns:
-        str: The SQLAlchemy database URI.
+        str: The SQLAlchemy URI for the specified database.
     """
-    # Build the database URI based on the database type and user credentials
-    uri = f"{DatabaseConfig.DATABASE_TYPE}://"
-    if (
-        DatabaseConfig.DATABASE_TYPE != "sqlite"
-        and os.environ.get("DATABASE_USER")
-        and os.environ.get("DATABASE_PASSWORD")
-    ):
+
+    database_type = DatabaseConfig.DATABASE_TYPE
+    if "postgres" in database_type:
+        database_type = "postgresql"
+    elif "mysql" in database_type:
+        database_type = "mysql+pymysql"
+    uri = f"{database_type}:///"
+    if database_type != "sqlite" and os.environ.get("DATABASE_USER") and os.environ.get("DATABASE_PASSWORD"):
         uri += f"{os.environ['DATABASE_USER']}:{os.environ['DATABASE_PASSWORD']}@"
-    uri += f"/{database_name}".lower().replace(" ", "_")
-    # Check and modify the database URI if the database type is SQLite
-    return db_ext_check(uri)
+    if "sqlite" in uri:
+        database_dir = os.path.join(os.getcwd(), "medusa", "database")
+        uri += f"{os.path.join(database_dir, database_name)}.db"
+        if not os.path.exists(database_dir):
+            os.makedirs(database_dir)
+    else:
+        uri += f"{database_name}"
+    return uri.lower().replace(" ", "_")
 
 
 class DatabaseConfig:

@@ -13,9 +13,9 @@ class Language(Base, db.Model):
         iso_639_1 (db.Column): A string column to store the iso_639_1 of the language.
         english_name (db.Column): A string column to store the English name of the language.
     """
-    name = db.Column(db.String)
-    iso_639_1 = db.Column(db.String)
-    english_name = db.Column(db.String)
+    name = db.Column(db.String(50))
+    iso_639_1 = db.Column(db.String(2))
+    english_name = db.Column(db.String(50))
 
     def __init__(self) -> None:
         """

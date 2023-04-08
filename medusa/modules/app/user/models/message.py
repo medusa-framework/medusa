@@ -12,7 +12,7 @@ class Message(Base):
         message (str): The message content.
         user_id (int): ID of the user who sent the message.
     """
-    message = db.Column(db.String())
+    message = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __init__(self) -> None:

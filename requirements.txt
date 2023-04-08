@@ -6,5 +6,6 @@ flask-login
 flask-migrate
 flask-sqlalchemy
 python-dotenv
-
-
+mysql-connector-python
+psycopg2-binary
+pymysql

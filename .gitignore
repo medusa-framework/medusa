@@ -36,4 +36,7 @@ database/
 
 # Directories to ignore
 **/migrations/
-**/logs/
+**/logs/**
+
+# Virtual Environments
+/venv
