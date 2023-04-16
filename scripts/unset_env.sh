@@ -1,8 +1,0 @@
-#!/bin/bash
-
-unset APP_ENV
-unset FLASK_APP
-unset SECRET_KEY
-unset DATABASE_TYPE
-unset DATABASE_NAME
-unset DATABASE_NAME_DEVELOPMENT
