@@ -1,7 +1,7 @@
 from flask_seeder import Seeder
-from modules.auth.models.access_group import AccessGroup
-from modules.auth.models.access_right import AccessRight
-from modules.base.seeders.base import BaseSeeder
+from modules.app.auth.models.access_group import AccessGroup
+from modules.app.auth.models.access_right import AccessRight
+from modules.app.base.seeders.base import BaseSeeder
 from config.app import db
 
 
@@ -15,12 +15,14 @@ class AccessGroupSeeder(BaseSeeder, Seeder):
         return [
             {
                 "name": "system",
-                "access_group_rights": AccessRight().model_get()
+                "access_group_access_right": AccessRight().model_get()
             },
             {
-                "name": "administrator"
+                "name": "administrator",
+                "access_group_access_right": AccessRight().model_get()
             },
             {
-                "name": "user"
+                "name": "user",
+                "access_group_access_right": AccessRight().model_get(default=True)
             }
         ]

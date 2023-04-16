@@ -1,5 +1,5 @@
 from flask import request
-from modules.base.routes.base import BaseRoute
+from modules.app.base.routes.base import BaseRoute
 from utils.to_json import to_json
 
 

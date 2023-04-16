@@ -1,5 +1,5 @@
 from flask import request
-from modules.base.controllers.base import BaseController
+from modules.app.base.controllers.base import BaseController
 
 
 class UserController(BaseController):

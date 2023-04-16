@@ -1,8 +1,16 @@
 from config.app import db, bcrypt, login_manager
-from modules.base.models.base import BaseModel
-from modules.auth.controllers.user import UserController
-from modules.auth.routes.user import UserRoute
+from modules.app.base.models.base import BaseModel
+from modules.app.auth.controllers.user import UserController
+from modules.app.auth.routes.user import UserRoute
 from flask_login import login_user, current_user, logout_user, UserMixin, login_required
+
+user_access_group = db.Table(
+    "user_access_group",
+    db.Column("access_group_id", db.Integer, db.ForeignKey(
+        "access_group.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey(
+        "user.id"), primary_key=True)
+)
 
 
 class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
@@ -10,6 +18,12 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     display_name = db.Column(db.String(255))
+    user_access_group = db.relationship(
+        "AccessGroup",
+        secondary=user_access_group,
+        lazy="subquery",
+        backref=db.backref("user", lazy=True)
+    )
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

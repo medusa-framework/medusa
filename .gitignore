@@ -4,42 +4,20 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
-
-# Distribution / packaging
-dist/
-build/
-eggs/
-*.egg-info/
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-
 # Ignore all database directories and files
 database/
 *.db
 
-# Temporary files
-*.bak
-*.swp
-*~
-
 # Directories to ignore
-**/migrations/
-**/logs/**
+/migrations/
+## TODO Logs directory created if doesn't exist
+/logs/**
 
 # Virtual Environments
 /venv
 /instance
 /instances
+
+# Modules
+/modules/custom/*
+!/modules/custom/__init__.py

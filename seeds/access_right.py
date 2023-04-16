@@ -1,6 +1,6 @@
 from flask_seeder import Seeder
-from modules.auth.models.access_right import AccessRight
-from modules.base.seeders.base import BaseSeeder
+from modules.app.auth.models.access_right import AccessRight
+from modules.app.base.seeders.base import BaseSeeder
 from config.app import db
 
 
@@ -27,5 +27,21 @@ class AccessRightSeeder(BaseSeeder, Seeder):
             {
                 "name": "delete_user",
                 "model": "User"
+            },
+            {
+                "name": "create_language",
+                "model": "Language"
+            },
+            {
+                "name": "get_language",
+                "model": "Language"
+            },
+            {
+                "name": "update_language",
+                "model": "Language"
+            },
+            {
+                "name": "delete_language",
+                "model": "Language"
             }
         ]

@@ -1,11 +1,16 @@
 from sqlalchemy import or_
-from modules.base.controllers.base import BaseController
-from modules.base.routes.base import BaseRoute
+from modules.app.base.controllers.base import BaseController
+from modules.app.base.routes.base import BaseRoute
 from utils.printable import Printable
+from utils.init_models import init_modules
 from config.app import db
 from datetime import datetime
 import uuid
 import logging
+import os
+
+modules_path = os.environ.get(
+    "MODULES_PATH", "/home/jacob/code/medusa/modules")
 
 
 class BaseModel(BaseRoute, BaseController):
@@ -20,17 +25,31 @@ class BaseModel(BaseRoute, BaseController):
 
     def set_attributes(self, obj, kwargs):
         for key, value in kwargs.items():
-            setattr(obj, "updated_at", datetime.now())
-            setattr(obj, key, value)
+            if isinstance(value, dict):
+                modules = init_modules(modules_path)
+                for model in modules:
+                    if model._name == value.get("model").lower():
+                        records = model.filter_by_any(value.get("ids")).all()
+                setattr(obj, key, records)
+            else:
+                setattr(obj, "updated_at", datetime.now())
+                setattr(obj, key, value)
 
     def filter_by_any(self, args):
         query = db.session.query(self.__class__)
+        if not args:
+            return query
         filters = []
-        for k, v in args.items():
-            if isinstance(v, int):
-                filters.append(getattr(self.__class__, k) == v)
-            else:
-                filters.append(getattr(self.__class__, k).ilike(f"%{v}%"))
+        if isinstance(args, dict):
+            for k, v in args.items():
+                if isinstance(v, int):
+                    filters.append(getattr(self.__class__, k) == v)
+                else:
+                    filters.append(getattr(self.__class__, k).ilike(f"%{v}%"))
+        elif isinstance(args, list):
+            for v in args:
+                if isinstance(v, int):
+                    filters.append(getattr(self.__class__, "id") == v)
         if filters:
             return query.filter(or_(*filters))
         else:
@@ -38,7 +57,6 @@ class BaseModel(BaseRoute, BaseController):
 
     def model_create(self, **kwargs):
         record = self.__class__(**kwargs)
-        print(vars(record))
         db.session.add(record)
         db.session.commit()
         self.log_record("POST", "Record created", record)
@@ -50,7 +68,6 @@ class BaseModel(BaseRoute, BaseController):
                 request_args["id"] = int(request_args.get("id"))
         records = self.filter_by_any(request_args).all()
         self.log_record_multi("GET", "Records retrieved", records)
-        # return "OK"
         return records
 
     def model_update(self, request_args=None, **kwargs):
