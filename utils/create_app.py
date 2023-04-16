@@ -5,7 +5,8 @@ from utils.init_models import init_modules
 from config.app import config
 import coloredlogs
 
-modules_path = os.environ.get("MODULES_PATH", "/home/jacob/code/yentl/modules")
+modules_path = os.environ.get(
+    "MODULES_PATH", "/home/jacob/code/medusa/modules")
 
 
 def create_app(env="development"):

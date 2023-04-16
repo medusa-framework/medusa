@@ -1,5 +1,6 @@
 import importlib.util
 import inspect
+import logging
 from pathlib import Path
 import os
 import sys
@@ -11,7 +12,7 @@ def init_modules(modules_path):
     if os.path.isdir(modules_path):
         db_models = []
     else:
-        print("MODULES_PATH not valid. Exiting.")
+        logging.error("MODULES_PATH not valid. Exiting.")
         sys.exit(1)
     for root, dirs, files in os.walk(modules_path):
         # Ignore __pycache__ and seeders directories
