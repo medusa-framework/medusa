@@ -1,7 +1,7 @@
 from flask_seeder import Seeder
 from modules.app.base.seeders.base import BaseSeeder
 from config.app import db
-from modules.language.models.language import Language
+from modules.app.language.models.language import Language
 
 
 class LanguageSeeder(BaseSeeder, Seeder):

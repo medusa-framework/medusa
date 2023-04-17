@@ -1,4 +1,3 @@
-from flask import request
 from modules.app.base.controllers.base import BaseController
 
 
