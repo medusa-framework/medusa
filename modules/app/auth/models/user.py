@@ -1,4 +1,4 @@
-from config.app import db, bcrypt, login_manager
+from config.packages import db, bcrypt, login_manager
 from modules.app.base.models.base import BaseModel
 from modules.app.auth.controllers.user import UserController
 from modules.app.auth.routes.user import UserRoute

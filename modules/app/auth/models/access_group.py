@@ -1,4 +1,4 @@
-from config.app import db
+from config.packages import db
 from modules.app.auth.models.access_right import AccessRight
 from modules.app.base.models.base import BaseModel
 

@@ -1,16 +1,13 @@
+from flask import current_app
 from sqlalchemy import or_
 from modules.app.base.controllers.base import BaseController
 from modules.app.base.routes.base import BaseRoute
 from utils.printable import Printable
 from utils.init_models import init_modules
-from config.app import db
+from config.packages import db
 from datetime import datetime
 import uuid
 import logging
-import os
-
-modules_path = os.environ.get(
-    "MODULES_PATH", "/home/jacob/code/medusa/modules")
 
 
 class BaseModel(BaseRoute, BaseController):
@@ -26,7 +23,7 @@ class BaseModel(BaseRoute, BaseController):
     def set_attributes(self, obj, kwargs):
         for key, value in kwargs.items():
             if isinstance(value, dict):
-                modules = init_modules(modules_path)
+                modules = init_modules(current_app.config.get("MODULES_DIR"))
                 for model in modules:
                     if model._name == value.get("model").lower():
                         records = model.filter_by_any(value.get("ids")).all()

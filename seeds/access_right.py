@@ -1,7 +1,7 @@
 from flask_seeder import Seeder
 from modules.app.auth.models.access_right import AccessRight
 from modules.app.base.seeders.base import BaseSeeder
-from config.app import db
+from config.packages import db
 
 
 class AccessRightSeeder(BaseSeeder, Seeder):
