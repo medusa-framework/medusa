@@ -1,4 +1,4 @@
-from config.packages import db, bcrypt, login_manager
+from config.system import db, bcrypt, login_manager
 from modules.app.base.models.base import BaseModel
 from modules.app.auth.controllers.user import UserController
 from modules.app.auth.routes.user import UserRoute
@@ -18,6 +18,7 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     display_name = db.Column(db.String(255))
+    comments = db.relationship('Comment', backref='user', lazy=True)
     user_access_group = db.relationship(
         "AccessGroup",
         secondary=user_access_group,
@@ -41,11 +42,12 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
             password).decode("utf-8")
         return hashed_password
 
-    def model_login(self, **kwargs):
-        if kwargs.get("email") and kwargs.get("password"):
-            record = self.query.filter_by(email=kwargs.get("email")).first()
-            if record and bcrypt.check_password_hash(record.password, kwargs.get("password")):
-                login_user(record, remember=kwargs.get("remember"))
+    def model_login(self, **request_json):
+        if request_json.get("email") and request_json.get("password"):
+            record = self.query.filter_by(
+                email=request_json.get("email")).first()
+            if record and bcrypt.check_password_hash(record.password, request_json.get("password")):
+                login_user(record, remember=request_json.get("remember"))
                 return current_user
 
     def model_logout(self):
@@ -53,3 +55,14 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
             user = self.query.filter_by(id=current_user.id).first()
             logout_user()
             return user
+
+    def model_current(self):
+        if current_user.is_authenticated:
+            return current_user
+        else:
+            return None
+
+    def model_comments(self, **request_args):
+        users = self.model_get(**request_args)
+        comments = [comment for user in users for comment in user.comments]
+        return comments

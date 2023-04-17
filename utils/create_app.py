@@ -1,7 +1,7 @@
 import os
 import coloredlogs
 from flask import Flask
-from config.packages import db, migrate, seeder, login_manager, bcrypt
+from config.system import db, migrate, seeder, login_manager, bcrypt
 from config.environment import config
 from utils.init_models import init_modules
 from utils.load_confs import load_confs
