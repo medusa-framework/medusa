@@ -2,7 +2,7 @@ from flask_seeder import Seeder
 from modules.app.auth.models.access_group import AccessGroup
 from modules.app.base.seeders.base import BaseSeeder
 from modules.app.auth.models.user import User
-from config.app import db
+from config.packages import db
 
 
 class UserSeeder(BaseSeeder, Seeder):

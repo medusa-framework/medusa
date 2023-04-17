@@ -1,4 +1,4 @@
-from config.app import db
+from config.packages import db
 import logging
 
 

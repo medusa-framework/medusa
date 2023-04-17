@@ -23,16 +23,17 @@ load_conf_file() {
 }
 
 load_conf_files() {
-    local defaults_conf_file="$PROJECT_DIR/config/medusa.conf"
-    local conf_files="$(find "$PROJECT_DIR" -type f -name "*.conf" ! -name "medusa.conf")"
+    local medusa_conf_file="$PROJECT_DIR/medusa.conf"
+    local custom_conf_files="$(find "$PROJECT_DIR" -type f -name "*.conf" ! -name "medusa.conf")"
 
     # Load variables from defaults.conf (if present)
-    if [ -f "$defaults_conf_file" ]; then
-        load_conf_file "$defaults_conf_file"
+    if [ -f "$medusa_conf_file" ]; then
+        load_conf_file "$medusa_conf_file"
     fi
 
     # Load variables from all other .conf files
-    for conf_file in $conf_files; do
+    for conf_file in $custom_conf_files; do
         load_conf_file "$conf_file"
     done
+    log "Environment variables loaded"
 }

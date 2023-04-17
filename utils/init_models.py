@@ -4,15 +4,14 @@ import logging
 from pathlib import Path
 import os
 import sys
-
-from config.app import db
+from config.packages import db
 
 
 def init_modules(modules_path):
     if os.path.isdir(modules_path):
         db_models = []
     else:
-        logging.error("MODULES_PATH not valid. Exiting.")
+        logging.error("Modules path not valid. Exiting.")
         sys.exit(1)
     for root, dirs, files in os.walk(modules_path):
         # Ignore __pycache__ and seeders directories
