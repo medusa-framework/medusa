@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 import os
 import sys
-from config.packages import db
+from config.system import db
 
 
 def init_modules(modules_path):

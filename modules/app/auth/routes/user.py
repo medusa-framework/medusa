@@ -16,4 +16,12 @@ class UserRoute(BaseRoute):
         def route_logout():
             return to_json(self.controller_logout())
 
+        @self._blueprint.route('/current', methods=["POST"])
+        def route_current():
+            return to_json(self.controller_current())
+
+        @self._blueprint.route('/comments', methods=["GET"])
+        def route_comments():
+            return to_json(self.controller_comments(**request.args))
+
         return super().routes()

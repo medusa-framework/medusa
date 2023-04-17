@@ -1,6 +1,6 @@
 from flask_seeder import Seeder
 from modules.app.base.seeders.base import BaseSeeder
-from config.packages import db
+from config.system import db
 from modules.app.language.models.language import Language
 
 

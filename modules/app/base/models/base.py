@@ -4,15 +4,18 @@ from modules.app.base.controllers.base import BaseController
 from modules.app.base.routes.base import BaseRoute
 from utils.printable import Printable
 from utils.init_models import init_modules
-from config.packages import db
+from config.system import db
 from datetime import datetime
 import uuid
 import logging
 
 
 class BaseModel(BaseRoute, BaseController):
+    def generate_uuid(self):
+        return str(uuid.uuid4())
+
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(36), default=generate_uuid)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -39,6 +42,8 @@ class BaseModel(BaseRoute, BaseController):
         filters = []
         if isinstance(args, dict):
             for k, v in args.items():
+                if isinstance(v, str) and v.isdigit():
+                    v = int(v)
                 if isinstance(v, int):
                     filters.append(getattr(self.__class__, k) == v)
                 else:
@@ -52,8 +57,8 @@ class BaseModel(BaseRoute, BaseController):
         else:
             return query
 
-    def model_create(self, **kwargs):
-        record = self.__class__(**kwargs)
+    def model_create(self, **request_json):
+        record = self.__class__(**request_json)
         db.session.add(record)
         db.session.commit()
         self.log_record("POST", "Record created", record)
@@ -67,10 +72,10 @@ class BaseModel(BaseRoute, BaseController):
         self.log_record_multi("GET", "Records retrieved", records)
         return records
 
-    def model_update(self, request_args=None, **kwargs):
+    def model_update(self, request_args=None, **request_json):
         updated_at = []
         for record in self.filter_by_any(request_args).all():
-            self.set_attributes(record, kwargs)
+            self.set_attributes(record, request_json)
             updated_at.append(record.updated_at)
         db.session.commit()
         if not updated_at:
