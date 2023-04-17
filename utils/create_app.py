@@ -1,12 +1,9 @@
-from flask import Flask
 import os
-from config.app import db, migrate, seeder, login_manager, bcrypt
-from utils.init_models import init_modules
-from config.app import config
 import coloredlogs
-
-modules_path = os.environ.get(
-    "MODULES_PATH", "/home/jacob/code/medusa/modules")
+from flask import Flask
+from config.app import db, migrate, seeder, login_manager, bcrypt
+from config.app import config
+from utils.init_models import init_modules
 
 
 def create_app(env="development"):
@@ -20,5 +17,5 @@ def create_app(env="development"):
         bcrypt.init_app(app)
         login_manager.init_app(app)
         db.create_all()
-        init_modules(modules_path)
+        init_modules(app.config.get("MODULES_DIR"))
         return app

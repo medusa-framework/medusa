@@ -5,6 +5,8 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 import os
 from config.database import DatabaseConfig, build_sqlalchemy_uri
+import secrets
+import string
 
 
 db = SQLAlchemy()
@@ -12,18 +14,21 @@ migrate = Migrate()
 seeder = FlaskSeeder()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
+alphabet = string.ascii_letters + string.digits
 
 
 class Config(DatabaseConfig):
     APP_NAME = os.environ.get("APP_NAME", "medusa")
+    PROJECT_DIR = os.path.abspath(os.getcwd())
+    MODULES_DIR = f"{PROJECT_DIR}/modules"
     DATABASE_NAME = os.environ.get("DATABASE_NAME", "medusa")
-    SECRET_KEY = os.environ.get("SECRET_KEY", "regf6ergjk0egm8wefwef8998")
+    SECRET_KEY = ''.join(secrets.choice(alphabet) for i in range(32))
     DEBUG = False
     # TODO: if last 4 of log name is not '.log', append .log
     LOG_NAME = os.environ.get(
         "LOG_NAME", APP_NAME.lower().replace(" ", "_"))
-    LOG_PATH = os.environ.get("LOG_PATH", "/logs")
-    LOG_FILE = os.environ.get("LOG_FILE", f"{LOG_PATH}/{LOG_NAME}.log")
+    LOG_DIR = os.environ.get("LOG_DIR", "/logs")
+    LOG_FILE = os.environ.get("LOG_FILE", f"{LOG_DIR}/{LOG_NAME}.log")
 
 
 class DevelopmentConfig(Config):
