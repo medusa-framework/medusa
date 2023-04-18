@@ -7,7 +7,8 @@ from utils.init_models import init_modules
 from config.system import db
 from datetime import datetime
 import uuid
-import logging
+from config import logger
+
 
 
 class BaseModel(BaseRoute, BaseController):
@@ -18,6 +19,7 @@ class BaseModel(BaseRoute, BaseController):
     uuid = db.Column(db.String(36), default=generate_uuid)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
     def __init__(self, **kwargs) -> None:
         self.set_attributes(self, kwargs)
@@ -98,8 +100,8 @@ class BaseModel(BaseRoute, BaseController):
         id_list = []
         for record in records:
             id_list.append(record.id)
-        logging.warn(
-            "[%s] [%s] %s (id:%s)",
+        logger.debug(
+            "%s %s %s (id:%s)",
             self.__class__.__name__.upper(),
             request_type,
             message,
@@ -107,8 +109,8 @@ class BaseModel(BaseRoute, BaseController):
         )
 
     def log_record(self, request_type, message, record):
-        logging.warn(
-            "[%s] [%s] %s (id:%s)",
+        logger.debug(
+            "%s %s %s (id:%s)",
             self.__class__.__name__.upper(),
             request_type,
             message,
