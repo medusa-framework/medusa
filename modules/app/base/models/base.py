@@ -7,7 +7,7 @@ from utils.init_models import init_modules
 from config.system import db
 from datetime import datetime
 import uuid
-from . import logger
+from config import logger
 
 
 
@@ -100,8 +100,8 @@ class BaseModel(BaseRoute, BaseController):
         id_list = []
         for record in records:
             id_list.append(record.id)
-        logger.info(
-            "[%s] [%s] %s (id:%s)",
+        logger.debug(
+            "%s %s %s (id:%s)",
             self.__class__.__name__.upper(),
             request_type,
             message,
@@ -109,8 +109,8 @@ class BaseModel(BaseRoute, BaseController):
         )
 
     def log_record(self, request_type, message, record):
-        logger.info(
-            "[%s] [%s] %s (id:%s)",
+        logger.debug(
+            "%s %s %s (id:%s)",
             self.__class__.__name__.upper(),
             request_type,
             message,

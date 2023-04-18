@@ -1,5 +1,5 @@
 from config.system import db
-import logging
+from config import logger
 
 
 class BaseSeeder():
@@ -15,11 +15,11 @@ class BaseSeeder():
             if seeds:
                 for seed in seeds:
                     model = self._class().model_create(**seed)
-                logging.warn("[%s] Table has been seeded",
-                             self._class.__name__)
+                logger.warn("%s Table has been seeded",
+                             self._class.__name__.upper())
             else:
-                logging.warn(
-                    "[%s] Seeder has no defined seeds. Not seeding.", self._class.__name__)
+                logger.warn(
+                    "%s Seeder has no defined seeds. Not seeding.", self._class.__name__.upper())
         else:
-            logging.warn(
-                "[%s] Table data exists. Not seeding.", self._class.__name__)
+            logger.warn(
+                "%s Table data exists. Not seeding.", self._class.__name__.upper())
