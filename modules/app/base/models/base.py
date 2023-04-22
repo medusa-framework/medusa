@@ -7,7 +7,8 @@ from utils.init_models import init_modules
 from config.system import db
 from datetime import datetime
 import uuid
-import logging
+from config import logger
+
 
 
 class BaseModel(BaseRoute, BaseController):
@@ -18,6 +19,7 @@ class BaseModel(BaseRoute, BaseController):
     uuid = db.Column(db.String(36), default=generate_uuid)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
     def __init__(self, **kwargs) -> None:
         self.set_attributes(self, kwargs)
@@ -42,8 +44,11 @@ class BaseModel(BaseRoute, BaseController):
         filters = []
         if isinstance(args, dict):
             for k, v in args.items():
-                if isinstance(v, str) and v.isdigit():
-                    v = int(v)
+                if isinstance(v, str) and k == "id":
+                    if v.isdigit():
+                        v = int(v)
+                    else:
+                        continue
                 if isinstance(v, int):
                     filters.append(getattr(self.__class__, k) == v)
                 else:
@@ -59,8 +64,12 @@ class BaseModel(BaseRoute, BaseController):
 
     def model_create(self, **request_json):
         record = self.__class__(**request_json)
-        db.session.add(record)
-        db.session.commit()
+        try:
+            db.session.add(record)
+            db.session.commit()
+        except Exception as e:
+            self.log_record("POST", f"Record create failed. {type(e)} {e.orig}", record)
+            return None
         self.log_record("POST", "Record created", record)
         return self.query.filter_by(id=record.id).first()
 
@@ -77,7 +86,11 @@ class BaseModel(BaseRoute, BaseController):
         for record in self.filter_by_any(request_args).all():
             self.set_attributes(record, request_json)
             updated_at.append(record.updated_at)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            self.log_record("PATCH", f"Record update failed. {type(e)} {e.orig}", record)
+            return None
         if not updated_at:
             return []
         records = self.query.filter(
@@ -88,9 +101,13 @@ class BaseModel(BaseRoute, BaseController):
 
     def model_delete(self, **request_args):
         records = self.filter_by_any(request_args).all()
-        for record in self.filter_by_any(request_args):
-            db.session.delete(record)
-        db.session.commit()
+        try:
+            for record in records:
+                db.session.delete(record)
+            db.session.commit()
+        except Exception as e:
+            self.log_record("DELETE", f"Record delete failed. {type(e)} {e.orig}", record)
+            return None
         self.log_record_multi("DELETE", "Records deleted", records)
         return records
 
@@ -98,8 +115,8 @@ class BaseModel(BaseRoute, BaseController):
         id_list = []
         for record in records:
             id_list.append(record.id)
-        logging.warn(
-            "[%s] [%s] %s (id:%s)",
+        logger.debug(
+            "%s %s %s (id:%s)",
             self.__class__.__name__.upper(),
             request_type,
             message,
@@ -107,8 +124,8 @@ class BaseModel(BaseRoute, BaseController):
         )
 
     def log_record(self, request_type, message, record):
-        logging.warn(
-            "[%s] [%s] %s (id:%s)",
+        logger.debug(
+            "%s %s %s (id:%s)",
             self.__class__.__name__.upper(),
             request_type,
             message,
