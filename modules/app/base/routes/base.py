@@ -5,6 +5,7 @@ from utils.to_json import to_json
 class BaseRoute():
     def __init__(self) -> None:
         self._name = self.__class__.__name__.lower()
+        self._package = self.__class__.__module__.split(".")[2]
         self._blueprint = self.blueprint()
         self.routes()
         if not current_app.blueprints.get(self._name):
@@ -12,11 +13,16 @@ class BaseRoute():
         super().__init__()
 
     def blueprint(self):
-        return Blueprint(
+        blueprint = Blueprint(
             name=self._name,
             import_name=__name__,
-            url_prefix="/api/" + self._name
+            url_prefix="/api/" + self._name,
         )
+        blueprint.root_path = blueprint.root_path.replace(
+            "base", self._package)
+        blueprint.template_folder = blueprint.root_path.replace(
+            "routes", "templates")
+        return blueprint
 
     def routes(self):
         @self._blueprint.route('/', methods=["POST"])

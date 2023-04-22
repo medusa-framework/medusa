@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to {{app_name}}!</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            color: #333333;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.5;
+            margin: 0 0 1em 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to {{app_name}}, {{kwargs.username}}!</h1>
+    <p>Thank you for joining our community. We're excited to have you onboard and can't wait to see what you'll achieve
+        with us. To get started, simply log in to your account and explore our platform. If you have any questions or
+        need assistance, please don't hesitate to contact our support team. We're always here to help.
+    </p>
+    <!-- TODO: Link does not work because it points to API login, not web login -->
+    <a href="{{url_for('user.route_login', _external=True)}}">Log in to your account</a>
+    <small>(This link does not work)</small>
+    <p>
+        Best regards,
+        <br>
+        {{app_name}} Team
+    </p>
+</body>
+
+</html>

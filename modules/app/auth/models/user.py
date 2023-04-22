@@ -1,4 +1,5 @@
-from config.system import db, bcrypt, login_manager
+from config.system import db, bcrypt, login_manager, mail
+from modules.app.auth.emails.register import RegisterEmail
 from modules.app.base.models.base import BaseModel
 from modules.app.auth.controllers.user import UserController
 from modules.app.auth.routes.user import UserRoute
@@ -35,6 +36,7 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
 
     def model_create(self, **kwargs):
         kwargs["password"] = self.hashed_password(kwargs.get("password"))
+        RegisterEmail([kwargs.get("email")], **kwargs).send_email()
         return super().model_create(**kwargs)
 
     def hashed_password(self, password=None):
