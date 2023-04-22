@@ -1,10 +1,9 @@
 import os
 import coloredlogs
 from flask import Flask
-from config.system import db, migrate, seeder, login_manager, bcrypt
+from config.system import db, migrate, seeder, login_manager, bcrypt, mail
 from config.environment import config
 from utils.init_models import init_modules
-from utils.load_confs import load_confs
 
 
 def create_app(env="development"):
@@ -14,6 +13,7 @@ def create_app(env="development"):
         app.config.from_object(config[os.environ.get("APP_ENV", env)])
         db.init_app(app)
         migrate.init_app(app, db)
+        mail.init_app(app)
         seeder.init_app(app, db)
         bcrypt.init_app(app)
         login_manager.init_app(app)
