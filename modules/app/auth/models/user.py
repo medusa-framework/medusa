@@ -1,3 +1,4 @@
+from sqlalchemy import CheckConstraint
 from config.system import db, bcrypt, login_manager, mail
 from modules.app.auth.emails.register import RegisterEmail
 from modules.app.base.models.base import BaseModel
@@ -27,7 +28,9 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
         backref=db.backref("user", lazy=True)
     )
 
+
     def __init__(self, **kwargs) -> None:
+        self.model_factory()
         super().__init__(**kwargs)
 
     @login_manager.user_loader
