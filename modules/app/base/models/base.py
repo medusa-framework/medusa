@@ -1,6 +1,7 @@
 from flask import current_app
 from sqlalchemy import or_
 from modules.app.base.controllers.base import BaseController
+from modules.app.base.models.factory import BaseFactory
 from modules.app.base.routes.base import BaseRoute
 from utils.printable import Printable
 from utils.init_models import init_modules
@@ -8,12 +9,9 @@ from config.system import db
 from datetime import datetime
 import uuid
 from config import logger
-from faker import Faker
-import random
 
 
-
-class BaseModel(BaseRoute, BaseController):
+class BaseModel(BaseRoute, BaseController, BaseFactory):
     def generate_uuid(self):
         return str(uuid.uuid4())
 
@@ -21,8 +19,7 @@ class BaseModel(BaseRoute, BaseController):
     uuid = db.Column(db.String(36), default=generate_uuid)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-
+    
     def __init__(self, **kwargs) -> None:
         self.set_attributes(self, kwargs)
         super().__init__()
@@ -112,25 +109,7 @@ class BaseModel(BaseRoute, BaseController):
             return None
         self.log_record_multi("DELETE", "Records deleted", records)
         return records
-    
-    def model_factory(self):
-        faker = Faker()
-        table = self.__class__.__table__
-        kwargs = {}
-        for column in table.columns:
-            if not column.name.startswith('_'):
-                if column.name == "id" or column.name == "uuid":
-                    continue
-            col_type = column.type.__class__.__name__
-            if col_type == "String":
-                word_count = random.randint(1, 10)
-                words = faker.words(nb=word_count)
-                kwargs[column.name] = " ".join(words)[:column.type.length]
-            elif col_type == "DateTime":
-                kwargs[column.name] = datetime.now()
-            elif col_type == "Integer":
-                kwargs[column.name] = random.randint(1, 2000)
-        return "ok"
+
 
     def log_record_multi(self, request_type, message, records):
         id_list = []

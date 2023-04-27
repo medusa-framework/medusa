@@ -43,4 +43,4 @@ class BaseRoute():
 
         @self._blueprint.route('/factory', methods=["POST"])
         def route_factory():
-            return to_json(self.controller_factory())
+            return to_json(self.controller_factory(**request.args))

@@ -19,7 +19,10 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
     username = db.Column(db.String(255))
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
     display_name = db.Column(db.String(255))
+    phone = db.Column(db.String(255))
     comments = db.relationship('Comment', backref='user', lazy=True)
     user_access_group = db.relationship(
         "AccessGroup",
@@ -30,7 +33,6 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
 
 
     def __init__(self, **kwargs) -> None:
-        self.model_factory()
         super().__init__(**kwargs)
 
     @login_manager.user_loader
@@ -39,7 +41,7 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
 
     def model_create(self, **kwargs):
         kwargs["password"] = self.hashed_password(kwargs.get("password"))
-        RegisterEmail([kwargs.get("email")], **kwargs).send_email()
+        # RegisterEmail([kwargs.get("email")], **kwargs).send_email()
         return super().model_create(**kwargs)
 
     def hashed_password(self, password=None):
