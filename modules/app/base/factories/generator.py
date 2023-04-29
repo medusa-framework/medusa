@@ -2,8 +2,7 @@ from datetime import datetime
 import random
 from faker import Faker as faker
 
-
-class BaseFactory():
+class Generator():
     def __init__(self) -> None:
         self._value_generators = {
             "String": self.generate_string,
@@ -14,6 +13,14 @@ class BaseFactory():
             "Integer": self.generate_integer
         }
         super().__init__()
+
+    def generate_value(self, column):
+        col_type = column.type.__class__.__name__
+        generator = self._value_generators.get(col_type)
+        if generator:
+            return generator(column)
+        else:
+            return None
 
     def generate_string(self, column):
         col_name = column.name.lower().replace("_", "")
@@ -98,24 +105,3 @@ class BaseFactory():
     def generate_boolean(self, column):
         return faker().boolean()
     
-    def model_factory(self, count):
-        record_ids = []
-        for i in range(int(count)):
-            table = self.__class__.__table__
-            kwargs = {}
-            for column in table.columns:
-                if not column.name.startswith('_'):
-                    if column.name == "id" or column.name == "uuid":
-                        continue
-                    kwargs[column.name] = self.generate_value(column)
-            record_ids.append(self.model_create(**kwargs).id)
-        return self.filter_by_any(record_ids).all()
-        
-    
-    def generate_value(self, column):
-        col_type = column.type.__class__.__name__
-        generator = self._value_generators.get(col_type)
-        if generator:
-            return generator(column)
-        else:
-            return None

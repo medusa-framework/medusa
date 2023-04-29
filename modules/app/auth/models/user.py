@@ -1,6 +1,6 @@
-from sqlalchemy import CheckConstraint
 from config.system import db, bcrypt, login_manager, mail
 from modules.app.auth.emails.register import RegisterEmail
+from modules.app.auth.factories.user import UserFactory
 from modules.app.base.models.base import BaseModel
 from modules.app.auth.controllers.user import UserController
 from modules.app.auth.routes.user import UserRoute
@@ -15,7 +15,7 @@ user_access_group = db.Table(
 )
 
 
-class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
+class User(BaseModel, UserRoute, UserController, UserFactory, UserMixin, db.Model):
     username = db.Column(db.String(255))
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
@@ -41,7 +41,7 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
 
     def model_create(self, **kwargs):
         kwargs["password"] = self.hashed_password(kwargs.get("password"))
-        # RegisterEmail([kwargs.get("email")], **kwargs).send_email()
+        RegisterEmail([kwargs.get("email")], **kwargs).send_email()
         return super().model_create(**kwargs)
 
     def hashed_password(self, password=None):
@@ -73,3 +73,6 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
         users = self.model_get(**request_args)
         comments = [comment for user in users for comment in user.comments]
         return comments
+    
+
+
