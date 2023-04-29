@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, time
 import json
 
 
@@ -11,6 +11,10 @@ def serialize(obj):
         str or dict: The serialized object.
     """
     if isinstance(obj, datetime):
+        return obj.isoformat()
+    if isinstance(obj, date):
+        return obj.isoformat()
+    if isinstance(obj, time):
         return obj.isoformat()
     return {k: v for k, v in obj.__dict__.items() if not k.startswith('_')}
 

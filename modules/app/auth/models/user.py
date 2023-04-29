@@ -1,5 +1,6 @@
 from config.system import db, bcrypt, login_manager, mail
 from modules.app.auth.emails.register import RegisterEmail
+from modules.app.auth.factories.user import UserFactory
 from modules.app.base.models.base import BaseModel
 from modules.app.auth.controllers.user import UserController
 from modules.app.auth.routes.user import UserRoute
@@ -14,11 +15,14 @@ user_access_group = db.Table(
 )
 
 
-class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
+class User(BaseModel, UserRoute, UserController, UserFactory, UserMixin, db.Model):
     username = db.Column(db.String(255))
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
     display_name = db.Column(db.String(255))
+    phone = db.Column(db.String(255))
     comments = db.relationship('Comment', backref='user', lazy=True)
     user_access_group = db.relationship(
         "AccessGroup",
@@ -26,6 +30,7 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
         lazy="subquery",
         backref=db.backref("user", lazy=True)
     )
+
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -68,3 +73,6 @@ class User(BaseModel, UserRoute, UserController, UserMixin, db.Model):
         users = self.model_get(**request_args)
         comments = [comment for user in users for comment in user.comments]
         return comments
+    
+
+

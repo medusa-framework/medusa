@@ -14,5 +14,5 @@ class BaseController():
     def controller_get(self, **request_args):
         return self.model_get(**request_args)
 
-    def controller_factory(self, **request_json):
-        return self.model_factory(**request_json)
+    def controller_factory(self, **request_args):
+        return self.model_factory(**request_args)

@@ -1,6 +1,7 @@
 from flask import current_app
 from sqlalchemy import or_
 from modules.app.base.controllers.base import BaseController
+from modules.app.base.factories.factory import BaseFactory
 from modules.app.base.routes.base import BaseRoute
 from utils.printable import Printable
 from utils.init_models import init_modules
@@ -10,8 +11,7 @@ import uuid
 from config import logger
 
 
-
-class BaseModel(BaseRoute, BaseController):
+class BaseModel(BaseRoute, BaseController, BaseFactory):
     def generate_uuid(self):
         return str(uuid.uuid4())
 
@@ -19,8 +19,7 @@ class BaseModel(BaseRoute, BaseController):
     uuid = db.Column(db.String(36), default=generate_uuid)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-
+    
     def __init__(self, **kwargs) -> None:
         self.set_attributes(self, kwargs)
         super().__init__()
@@ -110,6 +109,7 @@ class BaseModel(BaseRoute, BaseController):
             return None
         self.log_record_multi("DELETE", "Records deleted", records)
         return records
+
 
     def log_record_multi(self, request_type, message, records):
         id_list = []
