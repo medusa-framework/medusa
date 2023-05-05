@@ -4,7 +4,7 @@ from modules.app.base.factories.factory import BaseFactory
 class UserFactory(BaseFactory):
     def __init__(self) -> None:
         """
-        Initializes a UserFactory instance.
+        Initializes a UserFactory instance. Should return super init call.
         """
         super().__init__()
 

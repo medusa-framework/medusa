@@ -7,9 +7,9 @@ class AccessRight(BaseModel, db.Model):
     Represents an access right in the system.
     
     Attributes:
-            name: The name of the Access Right.
-            model: The model that corresponds to the Access Right.
-            default: Default true/false value for the Access Right.
+            name (str): The name of the Access Right.
+            model (str): The model that corresponds to the Access Right.
+            default (bool): Default true/false value for the Access Right.
     """
     name = db.Column(db.String(255))
     model = db.Column(db.String(255))
