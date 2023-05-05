@@ -3,9 +3,18 @@ from modules.app.base.factories.factory import BaseFactory
 
 class UserFactory(BaseFactory):
     def __init__(self) -> None:
+        """
+        Initializes a UserFactory instance. Should return super init call.
+        """
         super().__init__()
 
-    def factory(self):
+    def factory(self) -> dict:
+        """
+        Creates a user dictionary with generated data.
+
+        Returns:
+            A dictionary representing a user with generated data.
+        """
         return {
             "username": self.generate_username(),
             "email": self.generate_email(),
